@@ -4,6 +4,7 @@ import FilmReducer from "./reducer/FilmReducer";
 import ShowReducer from "./reducer/ShowReducer";
 import CastReducer from "./reducer/CastReducer";
 import SeatReducer from "./reducer/SeatReducer";
+import GeneralReducer from "./reducer/GeneralReducer";
 
 // khai báo trước
 const store = configureStore({
@@ -12,6 +13,7 @@ const store = configureStore({
     ShowReducer,
     CastReducer,
     SeatReducer,
+    GeneralReducer,
   },
 });
 

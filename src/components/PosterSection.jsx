@@ -32,7 +32,7 @@ const PosterSection = () => {
       const currentIndex = movieList.findIndex(
         (p) => p[0].backdropPath == movie.backdropPath
       );
-      const nextIndex = (currentIndex + 1) % posters.length;
+      const nextIndex = (currentIndex + 1) % movieList.length;
       handlePosterClick(movieList[nextIndex][0]);
     }, 10000);
 

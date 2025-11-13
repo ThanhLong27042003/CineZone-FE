@@ -10,18 +10,27 @@ import {
   Film,
   Home,
   ChevronDown,
+  Loader2,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useDispatch, useSelector } from "react-redux";
+import { searchApi } from "../redux/reducer/GeneralReducer";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   const { myInfo, logout } = useAuth();
 
+  const { dataSearch, loading } = useSelector((state) => state.GeneralReducer);
+
+  // Detect scroll
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 400);
@@ -30,17 +39,32 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Close mobile menu when route changes
   useEffect(() => {
     setIsOpen(false);
   }, [location]);
 
+  // Close search on Esc key
   useEffect(() => {
     const handleEsc = (e) => {
-      if (e.key === "Escape") setIsSearchOpen(false);
+      if (e.key === "Escape") {
+        setIsSearchOpen(false);
+        setSearchQuery("");
+      }
     };
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchQuery.trim().length >= 2) {
+        dispatch(searchApi(searchQuery.trim()));
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery, dispatch]);
 
   const navLinks = [
     { name: "Home", path: "/", icon: Home },
@@ -54,6 +78,27 @@ const Navbar = () => {
     setDropdownOpen(false);
     navigate("/login");
   };
+
+  const handleSearchItemClick = (item) => {
+    // Check if it's a movie or cast
+    if (item.id) {
+      navigate(`/movies/${item.id}`);
+    }
+    setIsSearchOpen(false);
+    setSearchQuery("");
+  };
+
+  const handleCloseSearch = () => {
+    setIsSearchOpen(false);
+    setSearchQuery("");
+  };
+
+  // Check if result is string message
+  const isNoResult = typeof dataSearch === "string";
+  const isMovieList =
+    Array.isArray(dataSearch) && dataSearch.length > 0 && dataSearch[0].title;
+  const isCastList =
+    Array.isArray(dataSearch) && dataSearch.length > 0 && dataSearch[0].name;
 
   return (
     <>
@@ -138,7 +183,6 @@ const Navbar = () => {
                         onClick={() => setDropdownOpen(false)}
                       />
                       <div className="absolute right-0 mt-3 w-56 bg-zinc-900 rounded-xl shadow-2xl border border-white/10 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                        {/* User Info Header */}
                         <div className="px-4 py-3 bg-gradient-to-r from-primary/20 to-purple-500/20 border-b border-white/10">
                           <p className="text-sm font-semibold text-white">
                             {myInfo.hoTen}
@@ -147,8 +191,6 @@ const Navbar = () => {
                             {myInfo.email}
                           </p>
                         </div>
-
-                        {/* Menu Items */}
                         <div className="py-2">
                           <Link
                             to="/profile"
@@ -192,39 +234,32 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - Same as before */}
       <div
         className={`fixed inset-0 z-40 lg:hidden transition-all duration-300 ${
           isOpen ? "visible" : "invisible"
         }`}
       >
-        {/* Backdrop */}
         <div
           className={`absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity duration-300 ${
             isOpen ? "opacity-100" : "opacity-0"
           }`}
           onClick={() => setIsOpen(false)}
         />
-
-        {/* Menu Panel */}
         <div
           className={`absolute top-0 right-0 h-full w-80 max-w-[85vw] bg-zinc-950 border-l border-white/10 shadow-2xl transition-transform duration-300 ${
             isOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
-          {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-white/10 bg-gradient-to-r from-primary/10 to-purple-500/10">
             <img src={assets.logo} alt="CineZone" className="w-28 h-auto" />
             <button
               onClick={() => setIsOpen(false)}
               className="p-2 rounded-full hover:bg-white/10 transition-colors"
-              aria-label="Close menu"
             >
               <XIcon className="w-6 h-6 text-white" />
             </button>
           </div>
-
-          {/* Navigation Links */}
           <div className="p-6 space-y-3">
             {navLinks.map((link) => (
               <Link
@@ -241,8 +276,6 @@ const Navbar = () => {
               </Link>
             ))}
           </div>
-
-          {/* Mobile Search */}
           <div className="px-6 pb-6">
             <button
               onClick={() => {
@@ -255,8 +288,6 @@ const Navbar = () => {
               <span className="font-medium text-base">Search Movies</span>
             </button>
           </div>
-
-          {/* User Info (Mobile) */}
           {myInfo && (
             <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-white/10 bg-gradient-to-t from-zinc-950 to-zinc-900">
               <div className="flex items-center gap-3 mb-4 p-4 bg-white/5 rounded-xl border border-white/10">
@@ -288,35 +319,141 @@ const Navbar = () => {
 
       {/* Search Modal */}
       {isSearchOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4">
+        <div className="fixed inset-0 z-50 flex flex-col pt-16 px-4">
           <div
-            className="absolute inset-0 bg-black/90 backdrop-blur-md animate-in fade-in duration-200"
-            onClick={() => setIsSearchOpen(false)}
+            className="absolute inset-0 bg-black/95 backdrop-blur-md"
+            onClick={handleCloseSearch}
           />
-          <div className="relative w-full max-w-2xl animate-in slide-in-from-top-4 duration-300">
-            <div className="relative">
+
+          <div className="relative w-full max-w-3xl mx-auto">
+            {/* Search Input */}
+            <div className="relative mb-4">
+              <SearchIcon className="absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search for movies, actors, directors..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Tìm kiếm phim, diễn viên, đạo diễn..."
                 autoFocus
-                className="w-full px-6 py-5 pl-16 pr-14 bg-zinc-900/90 backdrop-blur-xl border-2 border-white/20 rounded-2xl text-white text-lg placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/50 transition-all"
+                className="w-full px-6 py-4 pl-16 pr-14 bg-zinc-900/90 backdrop-blur-xl border-2 border-white/20 rounded-2xl text-white text-lg placeholder-gray-500 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/50 transition-all"
               />
-              <SearchIcon className="absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-400" />
               <button
-                onClick={() => setIsSearchOpen(false)}
+                onClick={handleCloseSearch}
                 className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-white/10 transition-colors"
-                aria-label="Close search"
               >
-                <XIcon className="w-6 h-6 text-gray-400" />
+                <XIcon className="w-6 h-6 text-gray-400 hover:text-white" />
               </button>
             </div>
-            <p className="mt-4 text-center text-sm text-gray-500">
-              Press{" "}
-              <kbd className="px-2 py-1 bg-zinc-800 rounded text-gray-300">
-                Esc
-              </kbd>{" "}
-              to close
-            </p>
+
+            {/* Search Results */}
+            {searchQuery.trim().length >= 2 && (
+              <div className="bg-zinc-900/95 backdrop-blur-xl rounded-2xl border border-white/10 max-h-[calc(100vh-200px)] overflow-y-auto shadow-2xl">
+                {loading ? (
+                  // Loading State
+                  <div className="flex items-center justify-center py-12">
+                    <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                    <span className="ml-3 text-gray-400">Đang tìm kiếm...</span>
+                  </div>
+                ) : isNoResult ? (
+                  // No Results
+                  <div className="py-12 text-center">
+                    <SearchIcon className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                    <p className="text-gray-400 text-lg">{dataSearch}</p>
+                  </div>
+                ) : isMovieList ? (
+                  // Movie Results
+                  <div>
+                    <div className="px-6 py-4 border-b border-white/10 bg-gradient-to-r from-primary/10 to-transparent">
+                      <h3 className="text-white font-semibold text-lg">
+                        Danh sách phim
+                      </h3>
+                    </div>
+                    <div className="p-4 space-y-2">
+                      {dataSearch.map((movie) => (
+                        <div
+                          key={movie.id}
+                          onClick={() => handleSearchItemClick(movie)}
+                          className="flex items-center gap-4 p-3 hover:bg-white/10 rounded-xl cursor-pointer transition-all duration-300 group"
+                        >
+                          <img
+                            src={movie.posterPath}
+                            alt={movie.title}
+                            className="w-16 h-24 object-cover rounded-lg border border-white/10 group-hover:border-primary transition-colors"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-white font-semibold text-base group-hover:text-primary transition-colors line-clamp-1">
+                              {movie.title}
+                            </h4>
+                            <p className="text-gray-400 text-sm mt-1">
+                              {movie.originalTitle}
+                            </p>
+                            <div className="flex items-center gap-3 mt-2 text-sm">
+                              <span className="text-gray-500">
+                                {movie.certification || "T18"}
+                              </span>
+                              <span className="text-gray-500">•</span>
+                              <span className="text-gray-500">
+                                {movie.releaseDate
+                                  ? new Date(movie.releaseDate).getFullYear()
+                                  : "N/A"}
+                              </span>
+                              <span className="text-gray-500">•</span>
+                              <span className="text-gray-500">
+                                {movie.runtime
+                                  ? `${Math.floor(movie.runtime / 60)}h ${
+                                      movie.runtime % 60
+                                    }m`
+                                  : "N/A"}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : isCastList ? (
+                  // Cast Results
+                  <div>
+                    <div className="px-6 py-4 border-b border-white/10 bg-gradient-to-r from-purple-500/10 to-transparent">
+                      <h3 className="text-white font-semibold text-lg">
+                        Danh sách diễn viên
+                      </h3>
+                    </div>
+                    <div className="p-4 space-y-2">
+                      {dataSearch.map((cast) => (
+                        <div
+                          key={cast.id}
+                          className="flex items-center gap-4 p-3 hover:bg-white/10 rounded-xl transition-all duration-300 group"
+                        >
+                          <img
+                            src={
+                              cast.profilePath || "https://placehold.co/80x80"
+                            }
+                            alt={cast.name}
+                            className="w-16 h-16 object-cover rounded-full border-2 border-white/10 group-hover:border-primary transition-colors"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-white font-semibold text-base group-hover:text-primary transition-colors">
+                              {cast.name}
+                            </h4>
+                            <p className="text-gray-400 text-sm mt-1">
+                              {cast.character || "Actor"}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            )}
+
+            {/* Hint */}
+            {searchQuery.trim().length === 0 && (
+              <p className="text-center text-sm text-gray-500 mt-4">
+                Nhập ít nhất 2 ký tự để tìm kiếm
+              </p>
+            )}
           </div>
         </div>
       )}
