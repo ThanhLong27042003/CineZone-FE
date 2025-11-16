@@ -15,6 +15,8 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { useDispatch, useSelector } from "react-redux";
 import { searchApi } from "../redux/reducer/GeneralReducer";
+import { logOut } from "../service/LoginService";
+import toast from "react-hot-toast";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,7 +28,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const { myInfo, logout } = useAuth();
+  const { myInfo } = useAuth();
 
   const { dataSearch, loading } = useSelector((state) => state.GeneralReducer);
 
@@ -73,10 +75,18 @@ const Navbar = () => {
 
   const isActive = (path) => location.pathname === path;
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    const res = await logOut({
+      userName: myInfo.userName,
+      passWord: myInfo.passWord,
+    });
+    sessionStorage.removeItem("ACCESS_TOKEN");
+    sessionStorage.removeItem("myInfo");
     setDropdownOpen(false);
-    navigate("/login");
+    toast.success(res);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   };
 
   const handleSearchItemClick = (item) => {
@@ -162,11 +172,11 @@ const Navbar = () => {
                   >
                     <img
                       src={myInfo.avatar}
-                      alt={myInfo.hoTen}
+                      alt={myInfo.userName}
                       className="w-9 h-9 rounded-full object-cover border-2 border-primary group-hover:border-primary-dull transition-colors"
                     />
                     <span className="hidden md:block font-medium text-white text-sm">
-                      {myInfo.hoTen}
+                      {myInfo.userName}
                     </span>
                     <ChevronDown
                       className={`hidden md:block w-4 h-4 text-gray-300 transition-transform duration-300 ${
@@ -185,10 +195,10 @@ const Navbar = () => {
                       <div className="absolute right-0 mt-3 w-56 bg-zinc-900 rounded-xl shadow-2xl border border-white/10 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                         <div className="px-4 py-3 bg-gradient-to-r from-primary/20 to-purple-500/20 border-b border-white/10">
                           <p className="text-sm font-semibold text-white">
-                            {myInfo.hoTen}
+                            {myInfo.userName}
                           </p>
                           <p className="text-xs text-gray-400 mt-0.5">
-                            {myInfo.email}
+                            {myInfo.emailAddress}
                           </p>
                         </div>
                         <div className="py-2">
@@ -293,15 +303,15 @@ const Navbar = () => {
               <div className="flex items-center gap-3 mb-4 p-4 bg-white/5 rounded-xl border border-white/10">
                 <img
                   src={myInfo.avatar}
-                  alt={myInfo.hoTen}
+                  alt={myInfo.userName}
                   className="w-12 h-12 rounded-full object-cover border-2 border-primary"
                 />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-white truncate">
-                    {myInfo.hoTen}
+                    {myInfo.userName}
                   </p>
                   <p className="text-xs text-gray-400 truncate">
-                    {myInfo.email}
+                    {myInfo.emailAddress}
                   </p>
                 </div>
               </div>

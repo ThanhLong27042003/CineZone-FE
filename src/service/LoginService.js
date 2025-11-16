@@ -6,10 +6,22 @@ export const login = (formData) => {
     .then((res) => res.data.result.token);
 };
 
+export const logOut = (formData) => {
+  return authHttp
+    .post("/auth/log-out", formData)
+    .then((res) => res.data.result);
+};
+
 export const getMyInfo = () => {
-  return authHttp.get("/user/me").then((res) => res.data.result);
+  return authHttp.get("/auth/me").then((res) => res.data.result);
 };
 
 export const register = (formData) => {
   return http.post("/user/createUser", formData).then((res) => res.data.result);
+};
+
+export const updateMyInfo = (formData) => {
+  return authHttp
+    .post("/auth/update/me", formData)
+    .then((res) => res.data.result);
 };

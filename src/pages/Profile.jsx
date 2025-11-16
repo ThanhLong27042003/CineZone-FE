@@ -20,20 +20,24 @@ import { motion } from "framer-motion";
 import { dummyShowsData } from "../assets/assets";
 import MovieCard from "../components/MovieCard";
 import BlurCircle from "../components/BlurCircle";
+import toast from "react-hot-toast";
+import { updateMyInfo } from "../service/LoginService";
 
 const Profile = () => {
   const { myInfo, setMyInfo } = useAuth();
   const [activeTab, setActiveTab] = useState("profile");
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    hoTen: myInfo?.hoTen || "",
-    email: myInfo?.email || "",
-    soDt: myInfo?.soDt || "",
+    userName: myInfo?.userName || "",
+    firstName: myInfo?.firstName || "",
+    lastName: myInfo?.lastName || "",
+    emailAddress: myInfo?.emailAddress || "",
+    phoneNumber: myInfo?.phoneNumber || "",
     dob: myInfo?.dob || "",
     address: myInfo?.address || "",
+    avatar: myInfo?.avatar || "",
   });
 
-  // Mock data - Replace with real API calls
   const bookingHistory = [
     {
       id: 1,
@@ -73,20 +77,24 @@ const Profile = () => {
     });
   };
 
-  const handleSave = () => {
-    // TODO: Call API to update profile
+  const handleSave = async () => {
+    console.log(formData);
+    const res = await updateMyInfo(formData);
     setMyInfo({ ...myInfo, ...formData });
     setIsEditing(false);
-    alert("Profile updated successfully! ✅");
+    toast(res);
   };
 
   const handleCancel = () => {
     setFormData({
-      hoTen: myInfo?.hoTen || "",
-      email: myInfo?.email || "",
-      soDt: myInfo?.soDt || "",
+      userName: myInfo?.userName || "",
+      firstName: myInfo?.firstName || "",
+      lastName: myInfo?.lastName || "",
+      emailAddress: myInfo?.emailAddress || "",
+      phoneNumber: myInfo?.phoneNumber || "",
       dob: myInfo?.dob || "",
       address: myInfo?.address || "",
+      avatar: myInfo?.avatar || "",
     });
     setIsEditing(false);
   };
@@ -105,7 +113,7 @@ const Profile = () => {
             {/* Avatar */}
             <div className="relative group">
               <img
-                src={myInfo?.avatar || "https://placehold.co/120x120"}
+                src={formData.avatar || "https://placehold.co/120x120"}
                 alt="Profile"
                 className="w-32 h-32 rounded-full object-cover border-4 border-primary shadow-xl"
               />
@@ -117,9 +125,9 @@ const Profile = () => {
             {/* User Info */}
             <div className="flex-1 text-center md:text-left">
               <h1 className="text-3xl font-bold text-white mb-2">
-                {myInfo?.hoTen || "User Name"}
+                {formData.userName || "User Name"}
               </h1>
-              <p className="text-gray-400 mb-4">{myInfo?.email}</p>
+              <p className="text-gray-400 mb-4">{formData.emailAddress}</p>
               <div className="flex flex-wrap gap-4 justify-center md:justify-start">
                 <div className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full">
                   <Ticket className="w-4 h-4 text-primary" />
@@ -203,16 +211,15 @@ const Profile = () => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Full Name */}
                 <div>
                   <label className="flex items-center gap-2 text-sm text-gray-400 mb-2">
                     <User className="w-4 h-4" />
-                    Full Name
+                    First Name
                   </label>
                   <input
                     type="text"
-                    name="hoTen"
-                    value={formData.hoTen}
+                    name="firstName"
+                    value={formData.firstName}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                     className={`w-full px-4 py-3 bg-zinc-800/50 border border-white/10 rounded-lg text-white ${
@@ -223,6 +230,42 @@ const Profile = () => {
                   />
                 </div>
 
+                <div>
+                  <label className="flex items-center gap-2 text-sm text-gray-400 mb-2">
+                    <User className="w-4 h-4" />
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    disabled={!isEditing}
+                    className={`w-full px-4 py-3 bg-zinc-800/50 border border-white/10 rounded-lg text-white ${
+                      isEditing
+                        ? "focus:border-primary focus:ring-2 focus:ring-primary/50"
+                        : "cursor-not-allowed opacity-70"
+                    } transition-all`}
+                  />
+                </div>
+                <div>
+                  <label className="flex items-center gap-2 text-sm text-gray-400 mb-2">
+                    <User className="w-4 h-4" />
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    name="userName"
+                    value={formData.userName}
+                    onChange={handleInputChange}
+                    disabled={!isEditing}
+                    className={`w-full px-4 py-3 bg-zinc-800/50 border border-white/10 rounded-lg text-white ${
+                      isEditing
+                        ? "focus:border-primary focus:ring-2 focus:ring-primary/50"
+                        : "cursor-not-allowed opacity-70"
+                    } transition-all`}
+                  />
+                </div>
                 {/* Email */}
                 <div>
                   <label className="flex items-center gap-2 text-sm text-gray-400 mb-2">
@@ -231,8 +274,8 @@ const Profile = () => {
                   </label>
                   <input
                     type="email"
-                    name="email"
-                    value={formData.email}
+                    name="emailAddress"
+                    value={formData.emailAddress}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                     className={`w-full px-4 py-3 bg-zinc-800/50 border border-white/10 rounded-lg text-white ${
@@ -251,8 +294,8 @@ const Profile = () => {
                   </label>
                   <input
                     type="tel"
-                    name="soDt"
-                    value={formData.soDt}
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                     className={`w-full px-4 py-3 bg-zinc-800/50 border border-white/10 rounded-lg text-white ${
