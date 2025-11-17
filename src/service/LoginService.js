@@ -25,3 +25,9 @@ export const updateMyInfo = (formData) => {
     .post("/auth/update/me", formData)
     .then((res) => res.data.result);
 };
+
+export const changePassWord = (formData) => {
+  return authHttp
+    .post(`/auth/changePassWord/me`, formData)
+    .then((res) => res.data.result);
+};
