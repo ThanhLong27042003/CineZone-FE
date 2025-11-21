@@ -25,3 +25,9 @@ export const getTopMovieForHomePage = (genres) => {
     .get(`/movie/getTopMovieForHomePage/${genres}`)
     .then((res) => res.data.result);
 };
+
+export const getMovieForPage = (page, size) => {
+  return http
+    .get(`/movie/getMovieForPage/${page}/${size}`)
+    .then((res) => res.data.result);
+};
