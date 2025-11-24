@@ -65,16 +65,16 @@ const PosterSection = () => {
       <div className="absolute right-10 bottom-20 group grid grid-cols-5 gap-4 md:gap-8 max-w-xl z-20">
         {movieList.map((poster) => (
           <div
-            key={poster[0].backdropPath}
+            key={poster?.[0]?.backdropPath}
             className="group-hover:not-hover:opacity-50 hover:-translate-y-1 duration-300 transition max-md:h-60 md:max-h-60 cursor-pointer"
             onClick={() => handlePosterClick(poster[0])}
           >
             <img
-              src={poster[0].backdropPath.replace(
+              src={poster?.[0]?.backdropPath?.replace(
                 "upload/",
                 "upload/h_196,w_291/"
               )}
-              alt={poster[0].title}
+              alt={poster?.[0]?.title}
               loading="lazy"
               className="rounded-lg w-full h-full object-cover brightness-80"
             />

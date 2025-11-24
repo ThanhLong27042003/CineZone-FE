@@ -116,7 +116,7 @@ const Navbar = () => {
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
-            ? "bg-black/95 backdrop-blur-xl border-b border-white/10 py-3"
+            ? "bg-[#09090b]/95 backdrop-blur-xl border-b border-white/10 py-3"
             : "bg-gradient-to-b from-black/80 to-transparent py-5"
         }`}
       >
@@ -231,7 +231,6 @@ const Navbar = () => {
                 </button>
               )}
 
-              {/* Mobile Menu Button */}
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="lg:hidden flex items-center justify-center w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 transition-all duration-300 hover:scale-110"
