@@ -6,8 +6,10 @@ import {
   isPending,
 } from "@reduxjs/toolkit";
 import {
+  getFavoriteMovie,
   getMovieForPage,
   getTopMovieForHomePage,
+  isLiked,
   laydanhsachphim,
   laythongtinphim,
 } from "../../service/MovieService";
@@ -34,7 +36,7 @@ export const getMovieForPageApi = createAsyncThunk(
     console.log("🚀 Fetching movies for page:", page, "size:", size);
     const res = await getMovieForPage(page, size);
     console.log("✅ Received response:", res);
-    return res; // ← res đã là object {content, totalPages, ...}
+    return res;
   }
 );
 
@@ -42,6 +44,21 @@ export const getTopMovieForHomePageApi = createAsyncThunk(
   "FilmReducer/getTopMovieForHomePageApi",
   async (genres) => {
     const res = await getTopMovieForHomePage(genres);
+    return res;
+  }
+);
+export const getFavoriteMovieApi = createAsyncThunk(
+  "FilmReducer/getFavoriteMovieApi",
+  async (userId) => {
+    const res = await getFavoriteMovie(userId);
+    return res;
+  }
+);
+
+export const isLikedApi = createAsyncThunk(
+  "FilmReducer/isLikedApi",
+  async ({ userId, movieId }) => {
+    const res = await isLiked(userId, movieId);
     return res;
   }
 );
@@ -57,6 +74,8 @@ const initialState = {
     size: 20,
     number: 0,
   },
+  favoriteFilms: [],
+  checkLiked: false,
   loading: true,
   error: null,
 };
@@ -75,16 +94,23 @@ const FilmReducer = createSlice({
       .addCase(getTopMovieForHomePageApi.fulfilled, (state, action) => {
         state.filmsByGenre = action.payload;
       })
+      .addCase(getFavoriteMovieApi.fulfilled, (state, action) => {
+        state.favoriteFilms = action.payload;
+      })
       .addCase(getMovieForPageApi.fulfilled, (state, action) => {
-        console.log("📦 Redux storing filmForPage:", action.payload);
-        state.filmForPage = action.payload; // ← Lưu toàn bộ object
+        state.filmForPage = action.payload;
+      })
+      .addCase(isLikedApi.fulfilled, (state, action) => {
+        state.checkLiked = action.payload;
       })
       .addMatcher(
         isPending(
           getAllMovieApi,
           getMovieByIdApi,
           getTopMovieForHomePageApi,
-          getMovieForPageApi
+          getMovieForPageApi,
+          getFavoriteMovieApi,
+          isLikedApi
         ),
         (state) => {
           state.loading = true;
@@ -96,7 +122,9 @@ const FilmReducer = createSlice({
           getAllMovieApi,
           getMovieByIdApi,
           getTopMovieForHomePageApi,
-          getMovieForPageApi
+          getMovieForPageApi,
+          getFavoriteMovieApi,
+          isLikedApi
         ),
         (state) => {
           state.loading = false;
@@ -107,7 +135,9 @@ const FilmReducer = createSlice({
           getAllMovieApi,
           getMovieByIdApi,
           getTopMovieForHomePageApi,
-          getMovieForPageApi
+          getMovieForPageApi,
+          getFavoriteMovieApi,
+          isLikedApi
         ),
         (state, action) => {
           state.loading = false;

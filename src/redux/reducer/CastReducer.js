@@ -4,7 +4,7 @@ import { getAllCast } from "../../service/CastService";
 const getAllCastApi = createAsyncThunk(
   "CastReducer/getAllCastApi",
   async () => {
-    return (res = getAllCast());
+    return (res = await getAllCast());
   }
 );
 

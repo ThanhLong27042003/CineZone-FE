@@ -5,8 +5,8 @@ import ShowReducer from "./reducer/ShowReducer";
 import CastReducer from "./reducer/CastReducer";
 import SeatReducer from "./reducer/SeatReducer";
 import GeneralReducer from "./reducer/GeneralReducer";
+import ProfileReducer from "./reducer/ProfileReducer";
 
-// khai báo trước
 const store = configureStore({
   reducer: {
     FilmReducer,
@@ -14,6 +14,7 @@ const store = configureStore({
     CastReducer,
     SeatReducer,
     GeneralReducer,
+    ProfileReducer,
   },
 });
 

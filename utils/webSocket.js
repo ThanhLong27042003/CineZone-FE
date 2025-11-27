@@ -2,11 +2,6 @@ import { useEffect, useRef } from "react";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
 
-/**
- * ✅ THAY ĐỔI: Tách WebSocket logic ra hook riêng
- * - Tái sử dụng cho nhiều component
- * - Dễ quản lý connection
- */
 export const webSocket = (showId, onMessage) => {
   const stompClientRef = useRef(null);
 

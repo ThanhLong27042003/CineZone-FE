@@ -1,7 +1,6 @@
 import MovieDetails from "./pages/MovieDetails";
 import SeatLayout from "./pages/SeatLayout";
 import MyBookings from "./pages/MyBookings";
-import Favorite from "./pages/Favorite";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -39,7 +38,6 @@ const App = () => {
           element={<SeatLayout />}
         />
         <Route path="/my_bookings" element={<MyBookings />} />
-        <Route path="/favorite" element={<Favorite />} />
         <Route path="/admin/*" element={<Layout />}>
           <Route index element={<DashBoard />} />
           <Route path="add-shows" element={<AddShows />} />

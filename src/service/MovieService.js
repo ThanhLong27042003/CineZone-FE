@@ -31,3 +31,16 @@ export const getMovieForPage = (page, size) => {
     .get(`/movie/getMovieForPage/${page}/${size}`)
     .then((res) => res.data.result);
 };
+
+export const getFavoriteMovie = (userId) => {
+  return http
+    .get(`/movie/getFavoriteMovie/${userId}`)
+    .then((res) => res.data.result);
+};
+
+export const isLiked = (userId, movieId) => {
+  return http
+    .get(`/movie/isLiked/${userId}/${movieId}`)
+    .then((res) => res.data.result);
+};
+

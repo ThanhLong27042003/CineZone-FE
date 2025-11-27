@@ -332,7 +332,11 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import BlurCircle from "../components/BlurCircle";
 import { useSelector, useDispatch } from "react-redux";
-import { getAllMovieApi, getMovieByIdApi } from "../redux/reducer/FilmReducer";
+import {
+  getAllMovieApi,
+  getMovieByIdApi,
+  isLikedApi,
+} from "../redux/reducer/FilmReducer";
 import { getAllShowByMovieIdApi } from "../redux/reducer/ShowReducer";
 import {
   Heart,
@@ -343,30 +347,60 @@ import {
   Calendar,
   X, // ← NEW: Import X icon for close button
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion"; // ← NEW: Import AnimatePresence
+import { motion, AnimatePresence } from "framer-motion";
 import timeFormat from "../../utils/timeFormat";
 import DateSelect from "../components/DateSelect";
 import MovieCard from "../components/MovieCard";
 import Loading from "../components/Loading";
+import {
+  addFavoriteMovieApi,
+  removeFavoriteMovieApi,
+} from "../redux/reducer/ProfileReducer";
+import toast from "react-hot-toast";
+import { useAuth } from "../context/AuthContext";
 
 const MovieDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { film, arrFilm } = useSelector((state) => state.FilmReducer);
+  const { film, arrFilm, checkLiked } = useSelector(
+    (state) => state.FilmReducer
+  );
   const { arrShow } = useSelector((state) => state.ShowReducer);
   const dispatch = useDispatch();
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(checkLiked);
   const [showTrailer, setShowTrailer] = useState(false);
-
+  const { myInfo } = useAuth();
+  const handleLikeMovieClick = (isLike) => {
+    if (!myInfo) {
+      navigate("/login");
+      return;
+    }
+    setIsLiked((prev) => !prev);
+    if (isLike) {
+      const res = dispatch(
+        addFavoriteMovieApi({ userId: myInfo?.id, movieId: id })
+      ).then((res) => res.payload);
+      toast.success(res);
+    } else {
+      const res = dispatch(
+        removeFavoriteMovieApi({ userId: myInfo?.id, movieId: id })
+      ).then((res) => res.payload);
+      toast.success(res);
+    }
+  };
   useEffect(() => {
     if (id) {
       dispatch(getMovieByIdApi(id));
       dispatch(getAllShowByMovieIdApi(id));
       dispatch(getAllMovieApi());
+      dispatch(isLikedApi({ userId: myInfo?.id, movieId: id }));
     }
   }, [dispatch, id]);
 
-  // ← NEW: Close trailer on ESC key
+  useEffect(() => {
+    setIsLiked(checkLiked);
+  }, [checkLiked]);
+
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === "Escape") {
@@ -375,7 +409,7 @@ const MovieDetails = () => {
     };
     if (showTrailer) {
       document.addEventListener("keydown", handleEscape);
-      document.body.style.overflow = "hidden"; // Prevent background scroll
+      document.body.style.overflow = "hidden";
     }
     return () => {
       document.removeEventListener("keydown", handleEscape);
@@ -531,7 +565,7 @@ const MovieDetails = () => {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => setIsLiked(!isLiked)}
+                      onClick={() => handleLikeMovieClick(!isLiked)}
                       className="p-3 bg-gray-800/60 hover:bg-gray-700/60 border border-gray-700 rounded-xl transition-all duration-300 backdrop-blur-sm"
                     >
                       <Heart

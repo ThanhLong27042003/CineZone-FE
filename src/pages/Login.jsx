@@ -2,7 +2,7 @@ import React from "react";
 import { login } from "../service/LoginService";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { getMyInfo } from "../service/LoginService";
+import { getMyInfo } from "../service/ProfileService";
 const Login = () => {
   const navigate = useNavigate();
   const { setMyInfo } = useAuth();
@@ -61,7 +61,7 @@ const Login = () => {
               Mật khẩu:
             </label>
             <input
-              type="password" 
+              type="password"
               id="passwordInput"
               name="passWord"
               placeholder="Nhập mật khẩu của bạn"
