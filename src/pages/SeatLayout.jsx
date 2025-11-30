@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { motion } from "framer-motion";
@@ -46,23 +46,6 @@ const SeatLayout = () => {
 
   webSocket(showId, handleSeatUpdate);
 
-  const handlePayment = useCallback(async () => {
-    if (selectedSeats.length === 0) {
-      toast.error("Vui lòng chọn ít nhất 1 ghế!");
-      return;
-    }
-    try {
-      const { data } = await http.post("/seat/book", {
-        showId: parseInt(showId),
-        seatNumbers: selectedSeats.map((seat) => seat.seatNumber),
-        userId: myInfo?.id,
-      });
-      if (data.result.success) {
-      }
-    } catch (err) {
-      toast.error(err);
-    }
-  });
   useEffect(() => {
     if (movieId && !movie) dispatch(getMovieByIdApi(movieId));
     if (movieId) dispatch(getAllSeatApi());
@@ -170,7 +153,19 @@ const SeatLayout = () => {
         <CountdownBanner
           seatCountdowns={seatCountdowns}
           selectedSeatsCount={selectedSeats.length}
-          onPayment={handlePayment}
+          onPayment={() => {
+            if (selectedSeats.length === 0) {
+              return toast.error("Please select at least one seat");
+            }
+            navigate("/payment", {
+              state: {
+                selectedSeats,
+                showId,
+                totalPrice,
+                userId: myInfo?.id,
+              },
+            });
+          }}
         />
       )}
 

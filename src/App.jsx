@@ -16,6 +16,9 @@ import ScrollToTop from "./components/ScrollToTop";
 import { Toaster } from "react-hot-toast";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
+import Payment from "./pages/Payment";
+import PaymentCallback from "./pages/PaymentCallback";
+import MockPaymentGateway from "./pages/MockPaymentGateway";
 
 const App = () => {
   const isAdminLogin = useLocation().pathname.startsWith("/admin");
@@ -37,6 +40,9 @@ const App = () => {
           path="/movies/:movieId/:showId/:date/:time"
           element={<SeatLayout />}
         />
+        <Route path="/payment" element={<Payment />} />
+        <Route path="/payment/mock" element={<MockPaymentGateway />} />
+        <Route path="/payment/callback" element={<PaymentCallback />} />
         <Route path="/my_bookings" element={<MyBookings />} />
         <Route path="/admin/*" element={<Layout />}>
           <Route index element={<DashBoard />} />
