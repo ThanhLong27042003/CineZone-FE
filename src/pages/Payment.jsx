@@ -22,6 +22,7 @@ const Payment = () => {
   const [paymentMethod, setPaymentMethod] = useState("vnpay");
   const [isProcessing, setIsProcessing] = useState(false);
   const [countdown, setCountdown] = useState(300);
+
   useEffect(() => {
     if (!selectedSeats || selectedSeats.length === 0) {
       navigate("/");
@@ -49,6 +50,13 @@ const Payment = () => {
       color: "from-blue-500 to-blue-600",
     },
     {
+      id: "paypal",
+      name: "PayPal",
+      icon: CreditCard,
+      description: "Pay with PayPal",
+      color: "from-yellow-400 to-yellow-500",
+    },
+    {
       id: "momo",
       name: "MoMo",
       icon: Smartphone,
@@ -64,6 +72,7 @@ const Payment = () => {
     },
   ];
 
+  // ✅ THAY ĐỔI Ở ĐÂY - Không cần truyền returnUrl nữa
   const handlePayment = async () => {
     setIsProcessing(true);
 
@@ -73,10 +82,13 @@ const Payment = () => {
         seatNumbers: selectedSeats.map((seat) => seat.seatNumber),
         userId,
         amount: totalPrice,
-        paymentMethod,
-        returnUrl: `${window.location.origin}/payment/callback`,
+        paymentMethod, // vnpay, momo, bank
+        // ❌ BỎ DÒNG NÀY - Backend tự lấy từ config
+        // returnUrl: `${window.location.origin}/payment/callback`,
       });
+
       if (data.result.paymentUrl) {
+        // ✅ Redirect đến VNPay thật (không phải mock gateway nữa)
         window.location.href = data.result.paymentUrl;
       }
     } catch (err) {

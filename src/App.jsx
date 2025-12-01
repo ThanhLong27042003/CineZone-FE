@@ -17,8 +17,9 @@ import { Toaster } from "react-hot-toast";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import Payment from "./pages/Payment";
-import PaymentCallback from "./pages/PaymentCallback";
-import MockPaymentGateway from "./pages/MockPaymentGateway";
+import VNPayCallback from "./pages/VNPayCallback";
+import PayPalCallback from "./pages/PayPalCallback";
+import PaymentCancelled from "./pages/PaymentCancelled";
 
 const App = () => {
   const isAdminLogin = useLocation().pathname.startsWith("/admin");
@@ -41,8 +42,9 @@ const App = () => {
           element={<SeatLayout />}
         />
         <Route path="/payment" element={<Payment />} />
-        <Route path="/payment/mock" element={<MockPaymentGateway />} />
-        <Route path="/payment/callback" element={<PaymentCallback />} />
+        <Route path="/payment/vnpay-callback" element={<VNPayCallback />} />
+        <Route path="/payment/paypal-callback" element={<PayPalCallback />} />
+        <Route path="/payment/cancelled" element={<PaymentCancelled />} />
         <Route path="/my_bookings" element={<MyBookings />} />
         <Route path="/admin/*" element={<Layout />}>
           <Route index element={<DashBoard />} />
