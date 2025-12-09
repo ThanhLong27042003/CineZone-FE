@@ -6,6 +6,7 @@ import CastReducer from "./reducer/CastReducer";
 import SeatReducer from "./reducer/SeatReducer";
 import GeneralReducer from "./reducer/GeneralReducer";
 import ProfileReducer from "./reducer/ProfileReducer";
+import AdminReducer from "./reducer/AdminReducer";
 
 const store = configureStore({
   reducer: {
@@ -15,8 +16,8 @@ const store = configureStore({
     SeatReducer,
     GeneralReducer,
     ProfileReducer,
+    admin: AdminReducer,
   },
 });
 
-// export sau
 export default store;

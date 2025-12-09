@@ -45,7 +45,7 @@ const SeatLayout = () => {
   } = seatsManagement(showId, myInfo);
 
   webSocket(showId, handleSeatUpdate);
-
+  const unbookedSeats = selectedSeats.filter((s) => s.status !== "BOOKED");
   useEffect(() => {
     if (movieId && !movie) dispatch(getMovieByIdApi(movieId));
     if (movieId) dispatch(getAllSeatApi());
@@ -61,7 +61,7 @@ const SeatLayout = () => {
   useEffect(() => {
     let isRelease = false;
     const handleBeforeUnload = (event) => {
-      if (selectedSeats.length === 0) return;
+      if (unbookedSeats.length === 0) return;
       event.preventDefault();
       isRelease = true;
       return event.returnValue;
@@ -139,8 +139,7 @@ const SeatLayout = () => {
         return acc;
       }, {});
 
-  const totalPrice = selectedSeats.length * 120000;
-
+  const totalPrice = unbookedSeats.length * 120000;
   if (!show) return <Loading />;
 
   return (
@@ -149,17 +148,17 @@ const SeatLayout = () => {
       <BlurCircle top="400px" right="100px" />
       <BlurCircle bottom="200px" left="50%" />
 
-      {selectedSeats.length !== 0 && (
+      {unbookedSeats.length !== 0 && (
         <CountdownBanner
           seatCountdowns={seatCountdowns}
-          selectedSeatsCount={selectedSeats.length}
+          selectedSeatsCount={unbookedSeats.length}
           onPayment={() => {
-            if (selectedSeats.length === 0) {
+            if (unbookedSeats.length === 0) {
               return toast.error("Please select at least one seat");
             }
             navigate("/payment", {
               state: {
-                selectedSeats,
+                unbookedSeats,
                 showId,
                 totalPrice,
                 userId: myInfo?.id,
@@ -230,7 +229,7 @@ const SeatLayout = () => {
           </div>
 
           {/* Selected Seats Summary */}
-          {selectedSeats.length > 0 && (
+          {unbookedSeats.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -240,7 +239,7 @@ const SeatLayout = () => {
                 Selected Seats
               </h3>
               <div className="flex flex-wrap gap-3 mb-4">
-                {selectedSeats.map((seat) => {
+                {unbookedSeats.map((seat) => {
                   const timeRemaining = seatCountdowns[seat.seatNumber]
                     ? Math.max(
                         0,
@@ -276,7 +275,7 @@ const SeatLayout = () => {
               </div>
               <div className="border-t border-gray-700 pt-3">
                 <div className="flex justify-between text-white">
-                  <span>Total ({selectedSeats.length} seats)</span>
+                  <span>Total ({unbookedSeats.length} seats)</span>
                   <span className="font-bold">
                     {totalPrice.toLocaleString("vi-VN")}đ
                   </span>
@@ -315,7 +314,6 @@ const SeatLayout = () => {
               </p>
             </div>
 
-            {/* ✅ THAY ĐỔI: Refactor seat grid rendering */}
             <div className="space-y-6">
               {/* Premium Seats */}
               <div className="space-y-2">
@@ -360,45 +358,6 @@ const SeatLayout = () => {
                 )}
               </div>
             </div>
-
-            {/* Checkout Button */}
-            <motion.div
-              className="flex justify-center mt-12"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-            >
-              <motion.button
-                onClick={() => {
-                  if (selectedSeats.length === 0) {
-                    return toast.error("Please select at least one seat");
-                  }
-                  navigate("/payment", {
-                    state: {
-                      selectedSeats,
-                      showId,
-                      totalPrice,
-                      userId: myInfo?.id,
-                    },
-                  });
-                }}
-                disabled={selectedSeats.length === 0}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className={`
-                  flex items-center gap-3 px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300
-                  ${
-                    selectedSeats.length > 0
-                      ? "bg-gradient-to-r from-primary to-primary-dull hover:from-primary-dull hover:to-primary text-white shadow-xl shadow-primary/30"
-                      : "bg-gray-700 text-gray-400 cursor-not-allowed"
-                  }
-                `}
-              >
-                <UsersIcon className="w-5 h-5" />
-                Proceed to Checkout
-                <ArrowRightIcon className="w-5 h-5" />
-              </motion.button>
-            </motion.div>
           </div>
         </motion.div>
       </div>

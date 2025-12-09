@@ -7,7 +7,7 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Movies from "./pages/Movies";
 import Layout from "./pages/admin/Layout";
-import AddShows from "./pages/admin/AddShows";
+import AddShows from "./components/admin/AddShows";
 import ListShows from "./pages/admin/ListShows";
 import ListBookings from "./pages/admin/ListBookings";
 import DashBoard from "./pages/admin/DashBoard";
@@ -20,6 +20,13 @@ import Payment from "./pages/Payment";
 import VNPayCallback from "./pages/VNPayCallback";
 import PayPalCallback from "./pages/PayPalCallback";
 import PaymentCancelled from "./pages/PaymentCancelled";
+import ListUsers from "./pages/admin/ListUsers";
+import CreateUser from "./components/admin/CreateUser";
+import EditUser from "./components/admin/EditUser";
+import ListMovies from "./pages/admin/ListMovies";
+import CreateMovie from "./components/admin/CreateMovie";
+import EditMovie from "./components/admin/EditMovie";
+import EditShows from "./components/admin/EditShows";
 
 const App = () => {
   const isAdminLogin = useLocation().pathname.startsWith("/admin");
@@ -51,6 +58,13 @@ const App = () => {
           <Route path="add-shows" element={<AddShows />} />
           <Route path="list-shows" element={<ListShows />} />
           <Route path="list-bookings" element={<ListBookings />} />
+          <Route path="list-movies" element={<ListMovies />} />
+          <Route path="list-users" element={<ListUsers />} />
+          <Route path="movies/create" element={<CreateMovie />} />
+          <Route path="movies/edit/:movieId" element={<EditMovie />} />
+          <Route path="create-user" element={<CreateUser />} />
+          <Route path="edit-user/:id" element={<EditUser />} />
+          <Route path="edit-show/:showId" element={<EditShows />} />
         </Route>
       </Routes>
       <Toaster position="top-center" reverseOrder={false} />

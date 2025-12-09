@@ -2,11 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { toast } from "react-hot-toast";
 import { http } from "./baseUrl";
 
-/**
- * ✅ THAY ĐỔI: Tách logic quản lý ghế ra hook riêng
- * - Giảm 100+ dòng code trong component
- * - Dễ test và reuse
- */
 export const seatsManagement = (showId, myInfo) => {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [occupiedSeats, setOccupiedSeats] = useState([]);
@@ -102,7 +97,6 @@ export const seatsManagement = (showId, myInfo) => {
   const handleSeatUpdate = (seatUpdate) => {
     const { userId, seatNumber, seatNumbers, status, expiresAt } = seatUpdate;
 
-    // ✅ THAY ĐỔI: Sử dụng switch case thay vì if-else
     switch (status) {
       case "HELD":
         setOccupiedSeats((prev) => [
@@ -111,7 +105,6 @@ export const seatsManagement = (showId, myInfo) => {
         ]);
 
         if (userId === myInfo?.id) {
-          // setSelectedSeats((prev) => [...prev, seatNumber]);
           setSelectedSeats((prev) => [
             ...prev.filter((s) => s.seatNumber !== seatNumber),
             { seatNumber, status, expiresAt },

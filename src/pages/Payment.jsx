@@ -3,8 +3,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   CreditCard,
-  Smartphone,
-  Building2,
   CheckCircle2,
   ArrowLeft,
   Shield,
@@ -18,13 +16,13 @@ import { http } from "../../utils/baseUrl";
 const Payment = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { selectedSeats, showId, totalPrice, userId } = location.state || {};
+  const { unbookedSeats, showId, totalPrice, userId } = location.state || {};
   const [paymentMethod, setPaymentMethod] = useState("vnpay");
   const [isProcessing, setIsProcessing] = useState(false);
   const [countdown, setCountdown] = useState(300);
 
   useEffect(() => {
-    if (!selectedSeats || selectedSeats.length === 0) {
+    if (!unbookedSeats || unbookedSeats.length === 0) {
       navigate("/");
       return;
     }
@@ -39,7 +37,7 @@ const Payment = () => {
       });
     }, 1000);
     return () => clearInterval(timer);
-  }, [selectedSeats, navigate]);
+  }, [unbookedSeats, navigate]);
 
   const paymentMethods = [
     {
@@ -56,39 +54,21 @@ const Payment = () => {
       description: "Pay with PayPal",
       color: "from-yellow-400 to-yellow-500",
     },
-    {
-      id: "momo",
-      name: "MoMo",
-      icon: Smartphone,
-      description: "Ví điện tử MoMo",
-      color: "from-pink-500 to-pink-600",
-    },
-    {
-      id: "bank",
-      name: "Internet Banking",
-      icon: Building2,
-      description: "Chuyển khoản ngân hàng",
-      color: "from-green-500 to-green-600",
-    },
   ];
 
-  // ✅ THAY ĐỔI Ở ĐÂY - Không cần truyền returnUrl nữa
   const handlePayment = async () => {
     setIsProcessing(true);
 
     try {
       const { data } = await http.post("/payment/create", {
         showId,
-        seatNumbers: selectedSeats.map((seat) => seat.seatNumber),
+        seatNumbers: unbookedSeats.map((seat) => seat.seatNumber),
         userId,
         amount: totalPrice,
-        paymentMethod, // vnpay, momo, bank
-        // ❌ BỎ DÒNG NÀY - Backend tự lấy từ config
-        // returnUrl: `${window.location.origin}/payment/callback`,
+        paymentMethod,
       });
 
       if (data.result.paymentUrl) {
-        // ✅ Redirect đến VNPay thật (không phải mock gateway nữa)
         window.location.href = data.result.paymentUrl;
       }
     } catch (err) {
@@ -103,7 +83,7 @@ const Payment = () => {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  if (!selectedSeats) return null;
+  if (!unbookedSeats) return null;
 
   return (
     <div className="min-h-screen bg-zinc-950 pt-28 pb-16">
@@ -249,12 +229,12 @@ const Payment = () => {
                 <div className="flex justify-between text-gray-400">
                   <span>Selected Seats:</span>
                   <span className="text-white font-semibold">
-                    {selectedSeats.length}
+                    {unbookedSeats.length}
                   </span>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
-                  {selectedSeats.map((seat) => (
+                  {unbookedSeats.map((seat) => (
                     <span
                       key={seat.seatNumber}
                       className="px-3 py-1 bg-primary/20 border border-primary/30 rounded-full text-primary text-sm font-semibold"
