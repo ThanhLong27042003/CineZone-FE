@@ -3,6 +3,7 @@ import { login } from "../service/LoginService";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getMyInfo } from "../service/ProfileService";
+import { toast } from "react-hot-toast";
 const Login = () => {
   const navigate = useNavigate();
   const { setMyInfo } = useAuth();
@@ -19,13 +20,10 @@ const Login = () => {
       sessionStorage.setItem("ACCESS_TOKEN", accessToken);
       const info = await getMyInfo();
       setMyInfo(info);
-      alert("Đăng nhập thành công ✅");
+      toast.success("Đăng nhập thành công ✅");
       navigate("/");
     } catch (error) {
-      alert(
-        "Đăng nhập thất bại ❌ Vui lòng kiểm tra lại tài khoản hoặc mật khẩu" +
-          error
-      );
+      toast.error(error?.response?.data?.message);
     }
   };
   return (

@@ -60,10 +60,11 @@ const App = () => {
           <Route path="list-bookings" element={<ListBookings />} />
           <Route path="list-movies" element={<ListMovies />} />
           <Route path="list-users" element={<ListUsers />} />
-          <Route path="movies/create" element={<CreateMovie />} />
-          <Route path="movies/edit/:movieId" element={<EditMovie />} />
+          <Route path="create-movie" element={<CreateMovie />} />
+          <Route path="edit-movie/:movieId" element={<EditMovie />} />
           <Route path="create-user" element={<CreateUser />} />
           <Route path="edit-user/:id" element={<EditUser />} />
+          {/* <Route path="create-show" element={< />} /> */}
           <Route path="edit-show/:showId" element={<EditShows />} />
         </Route>
       </Routes>

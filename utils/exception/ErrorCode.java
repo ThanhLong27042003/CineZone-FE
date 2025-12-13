@@ -31,7 +31,13 @@ public enum ErrorCode {
     PAYMENT_FAILED(1017, "Payment failed or cancelled",HttpStatus.BAD_REQUEST),
     SEAT_NOT_AVAILABLE(1018, "Seat is no longer available",HttpStatus.BAD_REQUEST),
     INVALID_SIGNATURE(1019, "Invalid payment signature",HttpStatus.BAD_REQUEST),
-    PAYMENT_NOT_FOUND(1020, "Payment metadata not found",HttpStatus.BAD_REQUEST);
+    PAYMENT_NOT_FOUND(1020, "Payment metadata not found",HttpStatus.BAD_REQUEST),
+    SHOW_HAS_BOOKINGS(1021, "This show has already booked",HttpStatus.BAD_REQUEST),
+    CAST_NOT_EXISTED(1022, "Cast is not existed",HttpStatus.BAD_REQUEST),
+    GENRE_NOT_EXISTED(1023, "Genre is not existed",HttpStatus.BAD_REQUEST),
+    BOOKING_NOT_FOUND(1024,"Booking not found!",HttpStatus.BAD_REQUEST),
+    BOOKING_ALREADY_CONFIRMED(1025,"booking has already been confirmed",HttpStatus.BAD_REQUEST),
+    BOOKING_ALREADY_CANCELLED(1026,"booking has already been cancelled",HttpStatus.BAD_REQUEST);
     final int code;
     final String message;
     final HttpStatus statusCode;

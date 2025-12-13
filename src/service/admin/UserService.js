@@ -16,10 +16,10 @@ export const createUser = (formData) => {
 
 export const updateUser = (userId, formData) => {
   return http
-    .put(`/admin/users${userId}`, formData)
+    .put(`/admin/users/${userId}`, formData)
     .then((res) => res.data.result);
 };
 
-export const deleteUser = (userId) => {
-  return http.delete(`/admin/users/${userId}`).then((res) => res.data.result);
+export const lockUser = (userId) => {
+  return http.post(`/admin/users/${userId}`).then((res) => res.data.result);
 };
