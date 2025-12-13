@@ -3,21 +3,31 @@ import { useNavigate, useParams } from "react-router-dom";
 import Title from "../../components/admin/Title";
 import { toast } from "react-hot-toast";
 import { motion } from "framer-motion";
-import { FaClock, FaSave, FaTimes, FaFilm, FaCalendar } from "react-icons/fa";
+import {
+  FaClock,
+  FaSave,
+  FaTimes,
+  FaFilm,
+  FaCalendar,
+  FaDoorOpen,
+} from "react-icons/fa";
 import { getAllMoviesForAdmin } from "../../service/admin/MovieService";
 import { updateShow } from "../../service/admin/ShowService";
 import { getShowById } from "../../service/ShowService";
+import { getAllRooms } from "../../service/admin/RoomService";
 
 const EditShows = () => {
   const { showId } = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     movieId: "",
+    roomId: "",
     showDate: "",
     showTime: "",
     price: "",
   });
   const [movies, setMovies] = useState([]);
+  const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
 
@@ -31,19 +41,22 @@ const EditShows = () => {
 
   const fetchData = async () => {
     try {
-      const [showResponse, moviesResponse] = await Promise.all([
+      const [showResponse, moviesResponse, roomsResponse] = await Promise.all([
         getShowById(showId),
         getAllMoviesForAdmin(0, 1000, null),
+        getAllRooms(),
       ]);
 
       const show = showResponse;
       setFormData({
         movieId: show.movieId || "",
+        roomId: show.roomId || "",
         showDate: show.showDate || "",
         showTime: show.showTime || "",
         price: show.price || "",
       });
       setMovies(moviesResponse.content || []);
+      setRooms(roomsResponse || []);
     } catch (error) {
       toast.error("Failed to fetch show data");
     } finally {
@@ -127,6 +140,39 @@ const EditShows = () => {
           </div>
         </div>
 
+        {/* Room Selection */}
+        <div className="mb-8">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <div className="w-1 h-6 bg-gradient-to-b from-blue-500 to-cyan-500 rounded"></div>
+            Room Selection
+          </h3>
+          <div className="grid grid-cols-1 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                <FaDoorOpen className="text-blue-500" />
+                Room *
+              </label>
+              <select
+                name="roomId"
+                value={formData.roomId}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-700 
+                         border-2 border-gray-200 dark:border-gray-600 
+                         focus:border-purple-500 transition-all outline-none
+                         text-gray-900 dark:text-white"
+              >
+                <option value="">Select a room</option>
+                {rooms.map((room) => (
+                  <option key={room.id} value={room.id}>
+                    {room.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
         {/* Show Schedule */}
         <div className="mb-8">
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
@@ -168,6 +214,24 @@ const EditShows = () => {
                          focus:border-purple-500 transition-all outline-none
                          text-gray-900 dark:text-white"
               />
+            </div>
+          </div>
+          {/* Overlap Warning */}
+          <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border-2 border-yellow-200 dark:border-yellow-700">
+            <div className="flex items-start gap-3">
+              <div className="text-yellow-600 dark:text-yellow-400 text-xl mt-0.5">
+                ⚠️
+              </div>
+              <div>
+                <p className="font-medium text-yellow-800 dark:text-yellow-200 mb-1">
+                  Check for Overlaps
+                </p>
+                <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                  Make sure this show time doesn't overlap with other shows in
+                  the same room. The system will automatically check and prevent
+                  overlapping schedules.
+                </p>
+              </div>
             </div>
           </div>
         </div>
