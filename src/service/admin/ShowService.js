@@ -9,11 +9,11 @@ export const getAllShowsForAdmin = (page, size, search) => {
 };
 
 export const createShow = (formData) => {
-  http.post("/admin/shows", formData).then((res) => res.data.result);
+  return http.post("/admin/shows", formData).then((res) => res.data.result);
 };
 
 export const updateShow = (showId, formData) => {
-  http.put(`/admin/shows/${showId}`, formData).then((res) => res.data.result);
+  return http.put(`/admin/shows/${showId}`, formData).then((res) => res.data.result);
 };
 
 export const deleteShow = (showId) => {

@@ -12,6 +12,7 @@ import {
   FaBars,
   FaTimes,
   FaUser,
+  FaBrain,
 } from "react-icons/fa";
 
 const AdminSidebar = () => {
@@ -23,12 +24,6 @@ const AdminSidebar = () => {
       icon: FaHome,
       label: "Dashboard",
       color: "from-blue-500 to-cyan-500",
-    },
-    {
-      path: "/admin/add-shows",
-      icon: FaFilm,
-      label: "Add Shows",
-      color: "from-purple-500 to-pink-500",
     },
     {
       path: "/admin/list-shows",
@@ -65,6 +60,12 @@ const AdminSidebar = () => {
       icon: FaCog,
       label: "Settings",
       color: "from-gray-500 to-gray-700",
+    },
+    {
+      path: "/admin/ai-insights",
+      icon: FaBrain,
+      label: "AI Insights",
+      color: "from-pink-500 to-rose-500",
     },
   ];
 

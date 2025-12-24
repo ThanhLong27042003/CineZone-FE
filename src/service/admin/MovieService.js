@@ -9,11 +9,11 @@ export const getAllMoviesForAdmin = (page, size, search) => {
 };
 
 export const createMovie = (formData) => {
-  http.post("/admin/movies", formData).then((res) => res.data.result);
+  return http.post("/admin/movies", formData).then((res) => res.data.result);
 };
 
 export const updateMovie = (movieId, formData) => {
-  http.put(`/admin/movies/${movieId}`, formData).then((res) => res.data.result);
+  return http.put(`/admin/movies/${movieId}`, formData).then((res) => res.data.result);
 };
 
 export const deleteMovie = (movieId) => {

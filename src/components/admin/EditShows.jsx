@@ -58,7 +58,7 @@ const EditShows = () => {
       setMovies(moviesResponse.content || []);
       setRooms(roomsResponse || []);
     } catch (error) {
-      toast.error("Failed to fetch show data");
+      toast.error(error?.response?.data?.message);
     } finally {
       setFetchLoading(false);
     }
@@ -76,11 +76,12 @@ const EditShows = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await updateShow(showId, formData);
-      toast.success("Show updated successfully");
+      const res = await updateShow(showId, formData);
+      console.log(res);
+      toast.success(res);
       navigate("/admin/list-shows");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to update show");
+      toast.error(error?.response?.data?.message);
     } finally {
       setLoading(false);
     }

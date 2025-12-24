@@ -1,0 +1,28 @@
+┌─ Analyze Revenue (400ms) ────────────────────┐
+│ 0ms    → Receive request                     │
+│ 10ms   → Convert to DataFrame                │
+│ 100ms  → Analyze peak hours                  │
+│ 200ms  → Analyze best days                   │
+│ 300ms  → Generate recommendations            │
+│ 400ms  → Return response ✅                  │
+└───────────────────────────────────────────────┘
+
+┌─ Optimize Schedule (6000ms for 7 days) ─────┐
+│ 0ms    → Parse date range                    │
+│ 500ms  → Rank movies by demand               │
+│ Loop for each day:                           │
+│   → For 13 time slots (10AM-11PM)            │
+│   → Check 3 rooms availability               │
+│   → Predict demand (ML model)                │
+│   → Calculate dynamic price                  │
+│ 6000ms → Return 84 optimized shows ✅        │
+└───────────────────────────────────────────────┘
+
+┌─ Train Model (10s background) ───────────────┐
+│ 0ms    → Receive 250 bookings                │
+│ 30ms   → Return immediate response ✅        │
+│ --- Background Task ---                      │
+│ 100ms  → Feature engineering                 │
+│ 2000ms → Train GradientBoosting              │
+│ 10000ms→ Model ready (accuracy 85%) ✅       │
+└───────────────────────────────────────────────┘

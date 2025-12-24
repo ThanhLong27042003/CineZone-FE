@@ -208,7 +208,7 @@ const ListShows = () => {
               className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white 
                        px-6 py-3 rounded-xl hover:shadow-xl transition-all font-medium
                        flex items-center justify-center gap-2"
-              onClick={() => (window.location.href = "/admin/create-show")}
+              onClick={() => (window.location.href = "/admin/add-shows")}
             >
               <FaPlus /> Add New Show
             </motion.button>

@@ -27,6 +27,7 @@ import ListMovies from "./pages/admin/ListMovies";
 import CreateMovie from "./components/admin/CreateMovie";
 import EditMovie from "./components/admin/EditMovie";
 import EditShows from "./components/admin/EditShows";
+import AIInsights from "./pages/AIInsights";
 
 const App = () => {
   const isAdminLogin = useLocation().pathname.startsWith("/admin");
@@ -64,8 +65,8 @@ const App = () => {
           <Route path="edit-movie/:movieId" element={<EditMovie />} />
           <Route path="create-user" element={<CreateUser />} />
           <Route path="edit-user/:id" element={<EditUser />} />
-          {/* <Route path="create-show" element={< />} /> */}
           <Route path="edit-show/:showId" element={<EditShows />} />
+          <Route path="ai-insights" element={<AIInsights />} />
         </Route>
       </Routes>
       <Toaster position="top-center" reverseOrder={false} />
