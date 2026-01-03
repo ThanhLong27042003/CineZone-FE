@@ -7,6 +7,7 @@ import SeatReducer from "./reducer/SeatReducer";
 import GeneralReducer from "./reducer/GeneralReducer";
 import ProfileReducer from "./reducer/ProfileReducer";
 import AdminReducer from "./reducer/AdminReducer";
+import StatsReducer from "./reducer/StatsReducer";
 
 const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ const store = configureStore({
     GeneralReducer,
     ProfileReducer,
     admin: AdminReducer,
+    StatsReducer,
   },
 });
 

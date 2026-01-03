@@ -83,7 +83,7 @@ const AIInsights = () => {
         [1, 2, 3],
         {
           start: new Date().toISOString().split("T")[0],
-          end: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+          end: new Date(Date.now() + 3650 * 24 * 60 * 60 * 1000)
             .toISOString()
             .split("T")[0],
         },
