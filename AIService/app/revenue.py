@@ -2,7 +2,7 @@
 from typing import List, Dict, Any
 import pandas as pd
 
-from .models import BookingData
+from .modelss import BookingData
 
 
 class RevenueAnalyzer:

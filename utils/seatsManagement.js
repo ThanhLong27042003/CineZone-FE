@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { toast } from "react-hot-toast";
-import { http } from "./baseUrl";
+import { authHttp, http } from "./baseUrl";
 
 export const seatsManagement = (showId, myInfo) => {
   const [selectedSeats, setSelectedSeats] = useState([]);
@@ -175,7 +175,7 @@ export const seatsManagement = (showId, myInfo) => {
     const endpoint = isReleasing ? "/seat/release" : "/seat/hold";
 
     try {
-      const { data } = await http.post(endpoint, {
+      const { data } = await authHttp.post(endpoint, {
         showId: parseInt(showId),
         seatNumber: seatId,
         userId: myInfo?.id,

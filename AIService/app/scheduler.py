@@ -6,7 +6,7 @@ Combines: Rule-based filtering → XGBoost prediction → Integer Programming op
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 
-from .models import MovieData, ShowData, BookingData, RoomData
+from .modelss import MovieData, ShowData, BookingData, RoomData
 from .feature_engineering import FeatureExtractor, RuleBasedFilter
 from .demand_predictor import DemandPredictor
 from .integer_optimizer import IntegerProgrammingOptimizer

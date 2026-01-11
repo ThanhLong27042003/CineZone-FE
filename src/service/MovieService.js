@@ -5,7 +5,7 @@ export const laydanhsachphim = () => {
 };
 
 export const themphim = (formData) => {
-  return http.post("/movie/createMovie", formData);
+  return authHttp.post("/movie/createMovie", formData);
 };
 
 export const laythongtinphim = (maPhim) => {
@@ -13,11 +13,11 @@ export const laythongtinphim = (maPhim) => {
 };
 
 export const capnhatPhim = (maPhim, formData) => {
-  return http.put(`/movie/updateMovie/${maPhim}`, formData);
+  return authHttp.put(`/movie/updateMovie/${maPhim}`, formData);
 };
 
 export const xoahim = (maPhim) => {
-  return http.delete(`/movie/deleteMovie/${maPhim}`);
+  return authHttp.delete(`/movie/deleteMovie/${maPhim}`);
 };
 
 export const getTopMovieForHomePage = (genres) => {
@@ -33,7 +33,7 @@ export const getMovieForPage = (page, size) => {
 };
 
 export const getFavoriteMovie = (userId) => {
-  return http
+  return authHttp
     .get(`/movie/getFavoriteMovie/${userId}`)
     .then((res) => res.data.result);
 };
@@ -43,4 +43,3 @@ export const isLiked = (userId, movieId) => {
     .get(`/movie/isLiked/${userId}/${movieId}`)
     .then((res) => res.data.result);
 };
-

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { DOMAIN_BE } from "./constant";
 
-const getAccessToken = () => sessionStorage.getItem("ACCESS_TOKEN");
+const getAccessToken = () => localStorage.getItem("ACCESS_TOKEN");
 export const http = axios.create({
   baseURL: DOMAIN_BE,
   timeout: 10000,
@@ -32,11 +32,11 @@ authHttp.interceptors.response.use(
             withCredentials: true,
           })
           .then((res) => res.data.result.accessToken);
-        sessionStorage.setItem("ACCESS_TOKEN", accessToken);
+        localStorage.setItem("ACCESS_TOKEN", accessToken);
         err.config.headers.Authorization = `Bearer ${accessToken}`;
         return authHttp(err.config);
       } catch (err) {
-        sessionStorage.removeItem("ACCESS_TOKEN");
+        localStorage.removeItem("ACCESS_TOKEN");
         if (window.location.pathname !== "/login") {
           window.location.href = "/login";
         }

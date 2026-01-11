@@ -18,7 +18,7 @@ except ImportError:
     PULP_AVAILABLE = False
     print("Warning: PuLP not available, using greedy fallback")
 
-from .models import MovieData, ShowData, RoomData, OptimizedShow
+from .modelss import MovieData, ShowData, RoomData, OptimizedShow
 from .feature_engineering import FeatureExtractor, RuleBasedFilter
 from .demand_predictor import DemandPredictor
 

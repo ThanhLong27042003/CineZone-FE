@@ -10,7 +10,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import numpy as np
 import pandas as pd
 
-from .models import BookingData, MovieData, ShowData, RoomData
+from .modelss import BookingData, MovieData, ShowData, RoomData
 
 
 class FeatureExtractor:

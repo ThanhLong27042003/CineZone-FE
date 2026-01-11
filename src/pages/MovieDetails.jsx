@@ -28,6 +28,10 @@ import {
 } from "../redux/reducer/ProfileReducer";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
+import {
+  getRecommendationsApi,
+  clearRecommendations,
+} from "../redux/reducer/GeneralReducer";
 
 const MovieDetails = () => {
   const { id } = useParams();
@@ -36,6 +40,9 @@ const MovieDetails = () => {
     (state) => state.FilmReducer
   );
   const { arrShow } = useSelector((state) => state.ShowReducer);
+  const { recommendations, recommendationsLoading } = useSelector(
+    (state) => state.GeneralReducer
+  );
   const dispatch = useDispatch();
   const [isLiked, setIsLiked] = useState(checkLiked);
   const [showTrailer, setShowTrailer] = useState(false);
@@ -64,7 +71,13 @@ const MovieDetails = () => {
       dispatch(getAllShowByMovieIdApi(id));
       dispatch(getAllMovieApi());
       dispatch(isLikedApi({ userId: myInfo?.id, movieId: id }));
+      // ✅ THÊM: Lấy AI recommendations
+      dispatch(getRecommendationsApi({ movieId: id, limit: 4 }));
     }
+    // Cleanup khi unmount
+    return () => {
+      dispatch(clearRecommendations());
+    };
   }, [dispatch, id]);
 
   useEffect(() => {
@@ -336,27 +349,41 @@ const MovieDetails = () => {
             transition={{ duration: 0.6 }}
           >
             You May Also Like
+            {/* ✅ Optional: Hiển thị badge AI */}
+            <span className="ml-2 px-2 py-1 text-xs bg-primary/20 text-primary rounded-full">
+              AI Powered
+            </span>
           </motion.h2>
 
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            {arrFilm.slice(0, 4).map((movie, index) => (
-              <motion.div
-                key={movie.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-              >
-                <MovieCard movie={movie} />
-              </motion.div>
-            ))}
-          </motion.div>
+          {recommendationsLoading ? (
+            <div className="flex justify-center py-8">
+              <Loading />
+            </div>
+          ) : (
+            <motion.div
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              {/* ✅ SỬA: Dùng recommendations thay vì arrFilm */}
+              {(recommendations.length > 0
+                ? recommendations
+                : arrFilm.slice(0, 4)
+              ).map((movie, index) => (
+                <motion.div
+                  key={movie.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                >
+                  <MovieCard movie={movie} />
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
 
           <motion.div
             className="flex justify-center mt-12"

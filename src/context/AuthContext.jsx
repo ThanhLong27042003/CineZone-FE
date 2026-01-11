@@ -5,7 +5,7 @@ import { http } from "../../utils/baseUrl";
 const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [myInfo, setMyInfo] = useState(
-    JSON.parse(sessionStorage.getItem("myInfo"))
+    JSON.parse(localStorage.getItem("myInfo"))
   );
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -16,13 +16,13 @@ export const AuthProvider = ({ children }) => {
         await getMyInfo().then((info) => setMyInfo(info));
       } catch (err) {
         setMyInfo(null);
-        sessionStorage.removeItem("myInfo");
+        localStorage.removeItem("myInfo");
       }
     };
     checkLoginStatus();
   }, []);
   const value = { myInfo, setMyInfo };
-  sessionStorage.setItem("myInfo", JSON.stringify(myInfo));
+  localStorage.setItem("myInfo", JSON.stringify(myInfo));
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 

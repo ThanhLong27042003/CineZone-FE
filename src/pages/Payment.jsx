@@ -11,7 +11,7 @@ import {
 import { toast } from "react-hot-toast";
 
 import BlurCircle from "../components/BlurCircle";
-import { http } from "../../utils/baseUrl";
+import { authHttp, http } from "../../utils/baseUrl";
 
 const Payment = () => {
   const location = useLocation();
@@ -60,7 +60,7 @@ const Payment = () => {
     setIsProcessing(true);
 
     try {
-      const { data } = await http.post("/payment/create", {
+      const { data } = await authHttp.post("/payment/create", {
         showId,
         seatNumbers: unbookedSeats.map((seat) => seat.seatNumber),
         userId,

@@ -2,11 +2,11 @@ from fastapi import APIRouter, HTTPException, BackgroundTasks
 from datetime import datetime
 from typing import List, Dict, Any
 
-from .models import (
+from .modelss import (
     AnalyticsRequest, BookingData, ScheduleOptimizationRequest, 
     MovieData, ShowData
 )
-from .services import revenue_analyzer, schedule_optimizer
+from .servicess import revenue_analyzer, schedule_optimizer
 
 router = APIRouter()
 

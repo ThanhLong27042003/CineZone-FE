@@ -18,7 +18,7 @@ except ImportError:
     XGBOOST_AVAILABLE = False
     print("Warning: XGBoost not available, using fallback")
 
-from .models import BookingData, MovieData
+from .modelss import BookingData, MovieData
 from .feature_engineering import FeatureExtractor
 
 

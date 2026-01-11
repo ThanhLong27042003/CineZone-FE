@@ -1,7 +1,5 @@
 package com.longtapcode.identity_service.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.longtapcode.identity_service.entity.Cast;
 import com.longtapcode.identity_service.entity.Movie;
 import com.longtapcode.identity_service.entity.Show;
 import com.longtapcode.identity_service.repository.*;
@@ -24,7 +22,6 @@ import java.util.*;
 public class AIService {
 
     final RestTemplate restTemplate = new RestTemplate();
-    final ObjectMapper objectMapper;
     private final BookingRepository bookingRepository;
     private final GenreRepository genreRepository;
     private final CastRepository castRepository;
@@ -144,7 +141,7 @@ public class AIService {
     /**
      * Predict demand for specific time slot
      */
-    public Map<String, Object> predictDemand(int hour, int dayOfWeek, boolean isWeekend) {
+    public Map predictDemand(int hour, int dayOfWeek, boolean isWeekend) {
         try {
             String url = String.format(
                     "%s/predict-demand?hour=%d&day_of_week=%d&is_weekend=%b",
@@ -189,7 +186,7 @@ public class AIService {
                 "Using basic analytics"
         ));
         analysis.put("patterns", Collections.emptyMap());
-        analysis.put("recommendations", Arrays.asList(
+        analysis.put("recommendations", List.of(
                 "Enable AI service for advanced insights"
         ));
         return analysis;
@@ -233,7 +230,10 @@ public class AIService {
             map.put("genreIds",genreIds);
             map.put("castIds",castIds);
             map.put("runtime",movie.getRuntime());
-            map.put("popularity",movie.getVoteCount());
+            map.put("popularity",0);
+            map.put("voteAverage",movie.getVoteAverage());
+            map.put("voteCount", movie.getVoteCount());
+            map.put("releaseDate",movie.getReleaseDate().toString());
 
             result.add(map);
         }

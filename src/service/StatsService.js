@@ -1,8 +1,5 @@
 import { http } from "../../utils/baseUrl";
 
-/**
- * Get all statistics for home page
- */
 export const getAllStats = async () => {
   try {
     const response = await http.get("/general/getAllStats");
@@ -13,9 +10,6 @@ export const getAllStats = async () => {
   }
 };
 
-/**
- * Get cinema statistics only
- */
 export const getCinemaStats = async () => {
   try {
     const response = await http.get("/general/cinema");
@@ -26,9 +20,6 @@ export const getCinemaStats = async () => {
   }
 };
 
-/**
- * Get trending movies
- */
 export const getTrendingMovies = async () => {
   try {
     const response = await http.get("/general/trending");
@@ -39,9 +30,6 @@ export const getTrendingMovies = async () => {
   }
 };
 
-/**
- * Get coming soon movies
- */
 export const getComingSoonMovies = async () => {
   try {
     const response = await http.get("/general/coming-soon");
@@ -52,9 +40,6 @@ export const getComingSoonMovies = async () => {
   }
 };
 
-/**
- * Get cinema info
- */
 export const getCinemaInfo = async () => {
   try {
     const response = await http.get("/general/cinema-info");
