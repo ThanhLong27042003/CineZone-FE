@@ -145,11 +145,11 @@ export const seatsManagement = (showId, myInfo) => {
 
       case "AVAILABLE":
         setOccupiedSeats((prev) =>
-          prev.filter((s) => s.seatNumber !== seatNumber)
+          prev.filter((s) => s.seatNumber !== seatNumber),
         );
 
         setSelectedSeats((prev) =>
-          prev.filter((s) => s.seatNumber !== seatNumber)
+          prev.filter((s) => s.seatNumber !== seatNumber),
         );
         setSeatCountdowns((prev) => {
           const { [seatNumber]: _, ...rest } = prev;
@@ -170,16 +170,18 @@ export const seatsManagement = (showId, myInfo) => {
     }
 
     const isReleasing = selectedSeats.some(
-      (seat) => seat.seatNumber === seatId
+      (seat) => seat.seatNumber === seatId,
     );
     const endpoint = isReleasing ? "/seat/release" : "/seat/hold";
-
     try {
-      const { data } = await authHttp.post(endpoint, {
-        showId: parseInt(showId),
-        seatNumber: seatId,
-        userId: myInfo?.id,
-      });
+      const { data } = await (endpoint === "/seat/hold" ? authHttp : http).post(
+        endpoint,
+        {
+          showId: parseInt(showId),
+          seatNumber: seatId,
+          userId: myInfo?.id,
+        },
+      );
 
       if (data.result.success) {
         return true;
@@ -204,7 +206,7 @@ export const seatsManagement = (showId, myInfo) => {
             userId: myInfo?.id,
           }),
         ],
-        { type: "application/json" }
+        { type: "application/json" },
       );
       navigator.sendBeacon("http://localhost:8080/cinezone/seat/release", blob);
     });

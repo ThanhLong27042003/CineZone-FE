@@ -1,7 +1,7 @@
-import { http } from "../../../utils/baseUrl";
+import { authHttp } from "../../../utils/baseUrl";
 
 export const getAllMoviesForAdmin = (page, size, search) => {
-  return http
+  return authHttp
     .get(`/admin/movies/getAllMovies/${page}/${size}`, {
       params: { search },
     })
@@ -9,13 +9,13 @@ export const getAllMoviesForAdmin = (page, size, search) => {
 };
 
 export const createMovie = (formData) => {
-  return http.post("/admin/movies", formData).then((res) => res.data.result);
+  return authHttp.post("/admin/movies", formData).then((res) => res.data.result);
 };
 
 export const updateMovie = (movieId, formData) => {
-  return http.put(`/admin/movies/${movieId}`, formData).then((res) => res.data.result);
+  return authHttp.put(`/admin/movies/${movieId}`, formData).then((res) => res.data.result);
 };
 
 export const deleteMovie = (movieId) => {
-  return http.delete(`/admin/movies/${movieId}`).then((res) => res.data.result);
+  return authHttp.delete(`/admin/movies/${movieId}`).then((res) => res.data.result);
 };

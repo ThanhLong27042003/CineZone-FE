@@ -4,21 +4,21 @@ export const laydanhsachphim = () => {
   return http.get("/movie/getAllMovie").then((res) => res.data.result);
 };
 
-export const themphim = (formData) => {
-  return authHttp.post("/movie/createMovie", formData);
-};
+// export const themphim = (formData) => {
+//   return authHttp.post("/movie/createMovie", formData);
+// };
 
 export const laythongtinphim = (maPhim) => {
   return http.get(`/movie/${maPhim}`).then((res) => res.data.result);
 };
 
-export const capnhatPhim = (maPhim, formData) => {
-  return authHttp.put(`/movie/updateMovie/${maPhim}`, formData);
-};
+// export const capnhatPhim = (maPhim, formData) => {
+//   return authHttp.put(`/movie/updateMovie/${maPhim}`, formData);
+// };
 
-export const xoahim = (maPhim) => {
-  return authHttp.delete(`/movie/deleteMovie/${maPhim}`);
-};
+// export const xoahim = (maPhim) => {
+//   return authHttp.delete(`/movie/deleteMovie/${maPhim}`);
+// };
 
 export const getTopMovieForHomePage = (genres) => {
   return http

@@ -1,4 +1,4 @@
-import { http } from "../../../utils/baseUrl";
+import { authHttp } from "../../../utils/baseUrl";
 
 export const getAllBookingsForAdmin = (page, size, filters = {}) => {
   const { userId, showId, status, fromDate, toDate } = filters;
@@ -11,31 +11,31 @@ export const getAllBookingsForAdmin = (page, size, filters = {}) => {
   if (fromDate) params.fromDate = fromDate;
   if (toDate) params.toDate = toDate;
 
-  return http
+  return authHttp
     .get(`/admin/bookings/getAllBookings/${page}/${size}`, { params })
     .then((res) => res.data.result);
 };
 
 export const getBookingById = (bookingId) => {
-  return http
+  return authHttp
     .get(`/admin/bookings/${bookingId}`)
     .then((res) => res.data.result);
 };
 
 export const cancelBooking = (bookingId) => {
-  return http
+  return authHttp
     .put(`/admin/bookings/${bookingId}/cancel`)
     .then((res) => res.data.result);
 };
 
 export const confirmBooking = (bookingId) => {
-  return http
+  return authHttp
     .put(`/admin/bookings/${bookingId}/confirm`)
     .then((res) => res.data.result);
 };
 
 export const getBookingStatistics = (fromDate, toDate) => {
-  return http
+  return authHttp
     .get("/admin/bookings/statistics", {
       params: {
         fromDate: fromDate || null,
@@ -46,7 +46,7 @@ export const getBookingStatistics = (fromDate, toDate) => {
 };
 
 export const getRevenueByDate = (fromDate, toDate) => {
-  return http
+  return authHttp
     .get("/admin/bookings/revenue-by-date", {
       params: {
         fromDate: fromDate || null,
@@ -57,7 +57,7 @@ export const getRevenueByDate = (fromDate, toDate) => {
 };
 
 export const getTopMovies = (fromDate, toDate, limit = 10) => {
-  return http
+  return authHttp
     .get("/admin/bookings/top-movies", {
       params: {
         fromDate: fromDate || null,

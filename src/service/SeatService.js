@@ -12,7 +12,7 @@ export const getOccupiedSeat = async (showId) => {
   return http.get(`/seat/occupied/${showId}`).then((res) => res.data.result);
 };
 export const releaseSeat = async (data) => {
-  return authHttp.post(`/seat/release`, data).then((res) => res.data.result);
+  return http.post(`/seat/release`, data).then((res) => res.data.result);
 };
 
 export const holdSeat = async (data) => {

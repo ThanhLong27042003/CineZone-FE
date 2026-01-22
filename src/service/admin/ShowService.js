@@ -1,7 +1,7 @@
-import { http } from "../../../utils/baseUrl";
+import { authHttp } from "../../../utils/baseUrl";
 
 export const getAllShowsForAdmin = (page, size, search) => {
-  return http
+  return authHttp
     .get(`/admin/shows/getAllShows/${page}/${size}`, {
       params: { search },
     })
@@ -9,13 +9,17 @@ export const getAllShowsForAdmin = (page, size, search) => {
 };
 
 export const createShow = (formData) => {
-  return http.post("/admin/shows", formData).then((res) => res.data.result);
+  return authHttp.post("/admin/shows", formData).then((res) => res.data.result);
 };
 
 export const updateShow = (showId, formData) => {
-  return http.put(`/admin/shows/${showId}`, formData).then((res) => res.data.result);
+  return authHttp
+    .put(`/admin/shows/${showId}`, formData)
+    .then((res) => res.data.result);
 };
 
 export const deleteShow = (showId) => {
-  return http.delete(`/admin/shows/${showId}`).then((res) => res.data.result);
+  return authHttp
+    .delete(`/admin/shows/${showId}`)
+    .then((res) => res.data.result);
 };

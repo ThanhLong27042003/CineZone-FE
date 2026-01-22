@@ -3,13 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
-import {
-  ArrowRightIcon,
-  ClockIcon,
-  MapPinIcon,
-  CalendarIcon,
-  UsersIcon,
-} from "lucide-react";
+import { ClockIcon, MapPinIcon, CalendarIcon } from "lucide-react";
 
 import { assets } from "../assets/assets";
 import BlurCircle from "../components/BlurCircle";
@@ -22,12 +16,12 @@ import { getAllSeatApi } from "../redux/reducer/SeatReducer";
 import { seatsManagement } from "../../utils/seatsManagement";
 import { webSocket } from "../../utils/webSocket";
 import { useAuth } from "../context/AuthContext";
-import { http } from "../../utils/baseUrl";
+import { getShowById } from "../service/ShowService";
 
 const SeatLayout = () => {
   const { movieId, showId, date, time } = useParams();
   const [show, setShow] = useState(null);
-
+  const [showToGetRoom, setShowToGetRoom] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { myInfo } = useAuth();
@@ -46,10 +40,20 @@ const SeatLayout = () => {
 
   webSocket(showId, handleSeatUpdate);
   const unbookedSeats = selectedSeats.filter((s) => s.status !== "BOOKED");
+
   useEffect(() => {
     if (movieId && !movie) dispatch(getMovieByIdApi(movieId));
     if (movieId) dispatch(getAllSeatApi());
   }, [dispatch, movieId]);
+
+  useEffect(() => {
+    const fetchShow = async () => {
+      if (showId) {
+        setShowToGetRoom(await getShowById(showId));
+      }
+    };
+    fetchShow();
+  }, [showId]);
 
   useEffect(() => {
     if (movie) {
@@ -89,10 +93,10 @@ const SeatLayout = () => {
         {numbers.map((_, i) => {
           const seatId = `${row}${i + 1}`;
           const selectedSeat = selectedSeats.find(
-            (s) => s.seatNumber === seatId
+            (s) => s.seatNumber === seatId,
           );
           const occupiedSeat = occupiedSeats.find(
-            (s) => s.seatNumber === seatId
+            (s) => s.seatNumber === seatId,
           );
           const isSelected = selectedSeat?.status === "HELD";
           const isBooked = selectedSeat?.status === "BOOKED";
@@ -101,7 +105,7 @@ const SeatLayout = () => {
           const countdown = seatCountdowns[seatId]
             ? Math.max(
                 0,
-                Math.floor((seatCountdowns[seatId] - Date.now()) / 1000)
+                Math.floor((seatCountdowns[seatId] - Date.now()) / 1000),
               )
             : 0;
 
@@ -197,7 +201,7 @@ const SeatLayout = () => {
               </div>
               <div className="flex items-center gap-2">
                 <MapPinIcon className="w-4 h-4 text-primary" />
-                <span>Cinema Hall 1</span>
+                <span>Room {showToGetRoom?.roomName}</span>
               </div>
             </div>
           </div>
@@ -244,8 +248,8 @@ const SeatLayout = () => {
                     ? Math.max(
                         0,
                         Math.floor(
-                          (seatCountdowns[seat.seatNumber] - Date.now()) / 1000
-                        )
+                          (seatCountdowns[seat.seatNumber] - Date.now()) / 1000,
+                        ),
                       )
                     : 0;
 
@@ -321,7 +325,7 @@ const SeatLayout = () => {
                   PREMIUM
                 </h3>
                 {Object.entries(groupSeatsByRow(1)).map(([row, numbers]) =>
-                  renderSeatRow(row, numbers)
+                  renderSeatRow(row, numbers),
                 )}
               </div>
 
@@ -338,7 +342,7 @@ const SeatLayout = () => {
                       {Object.entries(groupSeatsByRow(2))
                         [sliceIndex === 0 ? "slice" : "slice"](
                           sliceIndex === 0 ? 0 : sliceIndex,
-                          sliceIndex === 0 ? 3 : undefined
+                          sliceIndex === 0 ? 3 : undefined,
                         )
                         .map(([row, numbers]) => renderSeatRow(row, numbers))}
                     </div>
@@ -354,7 +358,7 @@ const SeatLayout = () => {
                   BACK
                 </h3>
                 {Object.entries(groupSeatsByRow(3)).map(([row, numbers]) =>
-                  renderSeatRow(row, numbers)
+                  renderSeatRow(row, numbers),
                 )}
               </div>
             </div>
