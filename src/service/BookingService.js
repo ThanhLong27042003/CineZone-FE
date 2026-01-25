@@ -29,6 +29,16 @@ export const getBookingById = async (bookingId) => {
 /**
  * Hủy booking (nếu cho phép)
  */
+// export const cancelMyBooking = async (bookingId) => {
+//   try {
+//     const response = await authHttp.put(`/booking/${bookingId}/cancel`);
+//     return response.data.result;
+//   } catch (error) {
+//     console.error("Error cancelling booking:", error);
+//     throw error;
+//   }
+// };
+
 export const cancelMyBooking = async (bookingId) => {
   try {
     const response = await authHttp.put(`/booking/${bookingId}/cancel`);

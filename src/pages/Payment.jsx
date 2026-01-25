@@ -20,6 +20,7 @@ const Payment = () => {
   const [paymentMethod, setPaymentMethod] = useState("vnpay");
   const [isProcessing, setIsProcessing] = useState(false);
   const [countdown, setCountdown] = useState(300);
+  const currency = import.meta.env.VITE_CURRENCY;
 
   useEffect(() => {
     if (!unbookedSeats || unbookedSeats.length === 0) {
@@ -192,7 +193,7 @@ const Payment = () => {
                     Processing...
                   </div>
                 ) : (
-                  `Pay ${totalPrice.toLocaleString("vi-VN")}đ`
+                  `Pay ${totalPrice}${currency}`
                 )}
               </motion.button>
             </div>
@@ -247,7 +248,10 @@ const Payment = () => {
                 <div className="border-t border-zinc-700 pt-4 space-y-2">
                   <div className="flex justify-between text-gray-400">
                     <span>Subtotal:</span>
-                    <span>{totalPrice.toLocaleString("vi-VN")}đ</span>
+                    <span>
+                      {totalPrice}
+                      {currency}
+                    </span>
                   </div>
                   <div className="flex justify-between text-gray-400">
                     <span>Service Fee:</span>
@@ -259,7 +263,8 @@ const Payment = () => {
                   <div className="flex justify-between text-white text-lg font-bold">
                     <span>Total:</span>
                     <span className="text-primary">
-                      {totalPrice.toLocaleString("vi-VN")}đ
+                      {totalPrice}
+                      {currency}
                     </span>
                   </div>
                 </div>

@@ -1,11 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-/**
- * ✅ THAY ĐỔI: Tách UI ghế ra component riêng
- * - Giảm 50+ dòng code trong renderSeats
- * - Dễ customize từng ghế
- */
 export const Seat = ({
   seatId,
   number,
@@ -30,12 +25,12 @@ export const Seat = ({
           isBooked
             ? "bg-green-600 text-white cursor-not-allowed"
             : isSelected
-            ? "bg-gradient-to-br from-primary to-primary-dull text-white shadow-lg shadow-primary/30"
-            : isBookByOthers
-            ? "bg-green-600 text-white cursor-not-allowed brightness-40"
-            : isHeldByOthers
-            ? "bg-gradient-to-br from-primary to-primary-dull text-white cursor-not-allowed brightness-40"
-            : "bg-gray-800/60 hover:bg-gray-700/80 border border-gray-600 hover:border-primary/50 text-gray-300 hover:text-white"
+              ? "bg-gradient-to-br from-primary to-primary-dull text-white shadow-lg shadow-primary/30"
+              : isBookByOthers
+                ? "bg-green-600 text-white cursor-not-allowed brightness-40"
+                : isHeldByOthers
+                  ? "bg-gradient-to-br from-primary to-primary-dull text-white cursor-not-allowed brightness-40"
+                  : "bg-gray-800/60 hover:bg-gray-700/80 border border-gray-600 hover:border-primary/50 text-gray-300 hover:text-white"
         }
       `}
     >

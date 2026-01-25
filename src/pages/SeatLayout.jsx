@@ -21,18 +21,18 @@ import { getShowById } from "../service/ShowService";
 const SeatLayout = () => {
   const { movieId, showId, date, time } = useParams();
   const [show, setShow] = useState(null);
-  const [showToGetRoom, setShowToGetRoom] = useState(null);
+  const [showToGetRoomAndPrice, setShowToGetRoomAndPrice] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { myInfo } = useAuth();
-
+  const currency = import.meta.env.VITE_CURRENCY;
   const movie = useSelector((state) => state.FilmReducer.film);
   const seats = useSelector((state) => state.SeatReducer.seats);
 
   const {
-    selectedSeats,
-    occupiedSeats,
-    seatCountdowns,
+    selectedSeats = [],
+    occupiedSeats = [],
+    seatCountdowns = {},
     handleSeatUpdate,
     handleSeatClick,
     releaseSeatWhenCloseTab,
@@ -49,7 +49,7 @@ const SeatLayout = () => {
   useEffect(() => {
     const fetchShow = async () => {
       if (showId) {
-        setShowToGetRoom(await getShowById(showId));
+        setShowToGetRoomAndPrice(await getShowById(showId));
       }
     };
     fetchShow();
@@ -142,8 +142,13 @@ const SeatLayout = () => {
         acc[row].push(seat.seatNumber.slice(1));
         return acc;
       }, {});
-
-  const totalPrice = unbookedSeats.length * 120000;
+  const totalSeat = selectedSeats.reduce((sum, seat) => {
+    if (seat.seatType === 1 && seat.status === "HELD") return sum + 1.3;
+    if (seat.seatType === 2 && seat.status === "HELD") return sum + 1.1;
+    if (seat.seatType === 3 && seat.status === "HELD") return sum + 1;
+    return sum;
+  }, 0);
+  const totalPrice = (totalSeat * showToGetRoomAndPrice?.price).toFixed(2);
   if (!show) return <Loading />;
 
   return (
@@ -201,7 +206,7 @@ const SeatLayout = () => {
               </div>
               <div className="flex items-center gap-2">
                 <MapPinIcon className="w-4 h-4 text-primary" />
-                <span>Room {showToGetRoom?.roomName}</span>
+                <span>Room {showToGetRoomAndPrice?.roomName}</span>
               </div>
             </div>
           </div>
@@ -281,7 +286,9 @@ const SeatLayout = () => {
                 <div className="flex justify-between text-white">
                   <span>Total ({unbookedSeats.length} seats)</span>
                   <span className="font-bold">
-                    {totalPrice.toLocaleString("vi-VN")}đ
+                    {totalPrice}
+                    {currency}
+                    {}
                   </span>
                 </div>
               </div>

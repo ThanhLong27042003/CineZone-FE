@@ -41,7 +41,7 @@ const PayPalCallback = () => {
             particleCount: 150,
             spread: 80,
             origin: { y: 0.6 },
-            colors: ["#FFC439", "#0070BA", "#003087"], // PayPal colors
+            colors: ["#FFC439", "#0070BA", "#003087"],
           });
 
           // Auto redirect after 3 seconds

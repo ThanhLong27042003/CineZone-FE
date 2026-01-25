@@ -15,7 +15,7 @@ import {
   Play,
   Clock,
   Calendar,
-  X, // ← NEW: Import X icon for close button
+  X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import timeFormat from "../../utils/timeFormat";
@@ -37,11 +37,11 @@ const MovieDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { film, arrFilm, checkLiked } = useSelector(
-    (state) => state.FilmReducer
+    (state) => state.FilmReducer,
   );
   const { arrShow } = useSelector((state) => state.ShowReducer);
   const { recommendations, recommendationsLoading } = useSelector(
-    (state) => state.GeneralReducer
+    (state) => state.GeneralReducer,
   );
   const dispatch = useDispatch();
   const [isLiked, setIsLiked] = useState(checkLiked);
@@ -55,12 +55,12 @@ const MovieDetails = () => {
     setIsLiked((prev) => !prev);
     if (isLike) {
       const res = dispatch(
-        addFavoriteMovieApi({ userId: myInfo?.id, movieId: id })
+        addFavoriteMovieApi({ userId: myInfo?.id, movieId: id }),
       ).then((res) => res.payload);
       toast.success(res);
     } else {
       const res = dispatch(
-        removeFavoriteMovieApi({ userId: myInfo?.id, movieId: id })
+        removeFavoriteMovieApi({ userId: myInfo?.id, movieId: id }),
       ).then((res) => res.payload);
       toast.success(res);
     }
@@ -71,7 +71,6 @@ const MovieDetails = () => {
       dispatch(getAllShowByMovieIdApi(id));
       dispatch(getAllMovieApi());
       dispatch(isLikedApi({ userId: myInfo?.id, movieId: id }));
-      // ✅ THÊM: Lấy AI recommendations
       dispatch(getRecommendationsApi({ movieId: id, limit: 4 }));
     }
     // Cleanup khi unmount
@@ -126,7 +125,7 @@ const MovieDetails = () => {
         style={{
           backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(9,9,11,0.9), rgb(9,9,11)), url(${film?.backdropPath?.replace(
             "upload/",
-            "upload/h_869,w_1526/"
+            "upload/h_869,w_1526/",
           )})`,
         }}
       >
@@ -141,7 +140,6 @@ const MovieDetails = () => {
                     alt={film.title}
                     className="w-full max-w-md mx-auto lg:mx-0 rounded-2xl shadow-2xl transition-transform duration-500 group-hover:scale-105"
                   />
-                  {/* ← MODIFIED: Only show play button if trailer exists */}
                   {film.trailer && (
                     <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                       <motion.button
@@ -223,7 +221,6 @@ const MovieDetails = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.7, duration: 0.6 }}
                   >
-                    {/* ← MODIFIED: Only show Watch Trailer button if trailer exists */}
                     {film.trailer && (
                       <motion.button
                         whileHover={{ scale: 1.05 }}
@@ -327,7 +324,7 @@ const MovieDetails = () => {
             }
             acc[date].push(show);
             return acc;
-          }, {})
+          }, {}),
         ).map(([showDate, showsForDate]) => (
           <DateSelect
             key={showDate}

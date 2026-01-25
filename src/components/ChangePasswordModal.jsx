@@ -41,8 +41,8 @@ const ChangePasswordModal = ({ showModal, setShowModal, userName }) => {
       return;
     }
 
-    if (passwordData.newPassword.length < 6) {
-      toast.error("Mật khẩu mới phải có ít nhất 6 ký tự!");
+    if (passwordData.newPassword.length < 8) {
+      toast.error("Mật khẩu mới phải có ít nhất 8 ký tự!");
       return;
     }
 

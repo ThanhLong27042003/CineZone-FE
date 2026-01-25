@@ -6,7 +6,6 @@ export const seatsManagement = (showId, myInfo) => {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [occupiedSeats, setOccupiedSeats] = useState([]);
   const [seatCountdowns, setSeatCountdowns] = useState({});
-
   const selectedSeatsRef = useRef([]);
   const countdownIntervalRef = useRef(null);
 
@@ -25,7 +24,7 @@ export const seatsManagement = (showId, myInfo) => {
         const { data } = await http.get(`/seat/occupied/${showId}`);
         const seats = data.result || [];
 
-        setOccupiedSeats(seats);
+        setOccupiedSeats(seats.filter((seat) => seat.userId !== myInfo?.id));
 
         const countdowns = {};
         const mySeats = [];
@@ -49,6 +48,20 @@ export const seatsManagement = (showId, myInfo) => {
     fetchOccupied();
   }, [showId, myInfo]);
 
+  useEffect(() => {
+    console.log("occupiedSeats mới:", occupiedSeats.length);
+    occupiedSeats.forEach((seat, idx) => {
+      console.log(`Seat ${idx}:`, seat);
+    });
+  }, [occupiedSeats]);
+
+  useEffect(() => {
+    if (!Array.isArray(selectedSeats)) return;
+    console.log("selectedSeats mới:", selectedSeats.length);
+    selectedSeats.forEach((seat, idx) => {
+      console.log(`Seat ${idx}:`, seat);
+    });
+  }, [selectedSeats]);
   // ==================== COUNTDOWN INTERVAL ====================
   useEffect(() => {
     if (Object.keys(seatCountdowns).length === 0) return;
@@ -69,23 +82,6 @@ export const seatsManagement = (showId, myInfo) => {
       });
 
       setSeatCountdowns(newCountdowns);
-
-      if (expiredSeats.length > 0) {
-        expiredSeats.forEach(async (seatNumber) => {
-          try {
-            const { data } = await http.post("/seat/release", {
-              showId: parseInt(showId),
-              seatNumber,
-              userId: myInfo?.id,
-            });
-            if (data.result.success) {
-              toast.error(`⏰ Ghế ${seatNumber} đã được hết thời gian giữ!`);
-            }
-          } catch (err) {
-            return;
-          }
-        });
-      }
     }, 1000);
 
     countdownIntervalRef.current = interval;
@@ -95,7 +91,8 @@ export const seatsManagement = (showId, myInfo) => {
 
   // ==================== WEBSOCKET UPDATE HANDLER ====================
   const handleSeatUpdate = (seatUpdate) => {
-    const { userId, seatNumber, seatNumbers, status, expiresAt } = seatUpdate;
+    const { userId, seatNumber, seatNumbers, seatType, status, expiresAt } =
+      seatUpdate;
 
     switch (status) {
       case "HELD":
@@ -103,11 +100,10 @@ export const seatsManagement = (showId, myInfo) => {
           ...prev.filter((s) => s.seatNumber !== seatNumber),
           { seatNumber, status, expiresAt },
         ]);
-
         if (userId === myInfo?.id) {
           setSelectedSeats((prev) => [
             ...prev.filter((s) => s.seatNumber !== seatNumber),
-            { seatNumber, status, expiresAt },
+            { seatNumber, seatType, status, expiresAt },
           ]);
           setSeatCountdowns((prev) => ({
             ...prev,
@@ -129,8 +125,9 @@ export const seatsManagement = (showId, myInfo) => {
             expireAt: 0,
           })),
         ]);
+
         setSelectedSeats((prev) => {
-          if (userId !== myInfo?.id) return;
+          if (userId !== myInfo?.id) return prev;
           return [
             ...prev.filter((s) => !seatNumbers.includes(s.seatNumber)),
             ...seatNumbers.map((seatNumber) => ({

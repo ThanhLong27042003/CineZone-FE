@@ -80,8 +80,8 @@ const Navbar = () => {
       userName: myInfo.userName,
       passWord: myInfo.passWord,
     });
-    sessionStorage.removeItem("ACCESS_TOKEN");
-    sessionStorage.removeItem("myInfo");
+    localStorage.removeItem("ACCESS_TOKEN");
+    localStorage.removeItem("myInfo");
     setDropdownOpen(false);
     toast.success(res);
     setTimeout(() => {

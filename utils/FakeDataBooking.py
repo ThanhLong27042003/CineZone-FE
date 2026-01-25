@@ -23,8 +23,8 @@ random.seed(42)
 
 # ---------- CONFIG ----------
 DB_URL = os.environ.get("DB_URL", "mysql+pymysql://root:@localhost:3306/cinezonedb")
-TOTAL_BOOKINGS = int(os.environ.get("TOTAL_BOOKINGS", "50000"))
-BATCH_SIZE = int(os.environ.get("BATCH_SIZE", "1000"))
+TOTAL_BOOKINGS = int(os.environ.get("TOTAL_BOOKINGS", "5000"))
+BATCH_SIZE = int(os.environ.get("BATCH_SIZE", "100"))
 # ----------------------------
 
 def log(*args, **kwargs):
@@ -72,14 +72,14 @@ def load_available_seat_instances(engine):
     return mapping
 
 def random_payment():
-    return random.choice(["CASH", "MOMO", "VNPAY", "ZALOPAY"])
+    return random.choice(["PAYPAL", "VNPAY"])
 
 def random_status():
     return random.choice(["PENDING", "CONFIRMED", "CANCELLED"])
 
 def random_seat_fallback():
     row = chr(ord('A') + random.randint(0, 9))
-    num = random.randint(1, 30)
+    num = random.randint(1, 9)
     return f"{row}{num}"
 
 def chunked(iterable, n):
