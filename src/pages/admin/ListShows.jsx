@@ -12,13 +12,10 @@ import {
   deleteShow,
   getAllShowsForAdmin,
 } from "../../service/admin/ShowService";
-import { motion } from "framer-motion";
 import {
   FaFilm,
   FaClock,
   FaTicketAlt,
-  FaDollarSign,
-  FaSearch,
   FaCalendar,
   FaEdit,
   FaTrash,
@@ -73,7 +70,6 @@ const ListShows = () => {
     try {
       dispatch(setShowsLoading(true));
 
-      // Parse date to datetime if exists
       let dateTimeFilter = null;
       if (debouncedFilters.date) {
         dateTimeFilter = debouncedFilters.date + "T00:00:00";
@@ -83,7 +79,7 @@ const ListShows = () => {
         page,
         10,
         debouncedFilters.movieId || null,
-        dateTimeFilter,
+        dateTimeFilter
       );
 
       dispatch(setShows(response || { content: [], totalPages: 0, number: 0 }));
@@ -103,13 +99,13 @@ const ListShows = () => {
   };
 
   const handleDelete = async (showId) => {
-    if (window.confirm("Are you sure you want to delete this show?")) {
+    if (window.confirm("Are you sure you want to delete this show? Shows with bookings cannot be deleted.")) {
       try {
         await deleteShow(showId);
         toast.success("Show deleted successfully");
         fetchShows();
       } catch (error) {
-        toast.error(error.response?.data?.message || "Failed to delete show");
+        toast.error(error.response?.data?.message || "Failed to delete show. It may have existing bookings.");
       }
     }
   };
@@ -140,11 +136,11 @@ const ListShows = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case "UPCOMING":
-        return "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-300";
+        return "bg-blue-100 text-blue-700 border border-blue-300";
       case "ONGOING":
-        return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 border border-green-300";
+        return "bg-green-100 text-green-700 border border-green-300";
       case "COMPLETED":
-        return "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300 border border-gray-300";
+        return "bg-gray-100 text-gray-700 border border-gray-300";
       default:
         return "bg-gray-100 text-gray-700";
     }
@@ -153,33 +149,19 @@ const ListShows = () => {
   const getStatusLabel = (status) => {
     switch (status) {
       case "UPCOMING":
-        return "🎬 Sắp chiếu";
+        return "🎬 Upcoming";
       case "ONGOING":
-        return "▶️ Đang chiếu";
+        return "▶️ Ongoing";
       case "COMPLETED":
-        return "✅ Đã chiếu";
+        return "✅ Completed";
       default:
         return status || "N/A";
     }
   };
 
-  // Get movie title by ID
   const getMovieTitle = (movieId) => {
     const movie = movies.find((m) => m.id === movieId);
     return movie ? movie.title : `Movie #${movieId}`;
-  };
-
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 },
-    },
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 },
   };
 
   return (
@@ -187,25 +169,19 @@ const ListShows = () => {
       <Title text1="List" text2="Shows" icon={FaFilm} />
 
       {/* Search and Filter Bar */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
-      >
+      <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
-              <FaFilm className="text-purple-500" />
+            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+              <FaFilm className="text-gray-500" />
               Filter by Movie
             </label>
             <select
               name="movieId"
               value={filters.movieId}
               onChange={handleFilterChange}
-              className="w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-700 
-                       border-2 border-gray-200 dark:border-gray-600 
-                       focus:border-purple-500 transition-all outline-none
-                       text-gray-900 dark:text-white"
+              className="w-full px-4 py-3 rounded-lg bg-white border-2 border-gray-200 
+                       focus:border-gray-400 transition-all outline-none text-gray-900"
             >
               <option value="">All Movies</option>
               {movies.map((movie) => (
@@ -217,8 +193,8 @@ const ListShows = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
-              <FaCalendar className="text-purple-500" />
+            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+              <FaCalendar className="text-gray-500" />
               Filter by Date
             </label>
             <input
@@ -226,181 +202,138 @@ const ListShows = () => {
               name="date"
               value={filters.date}
               onChange={handleFilterChange}
-              className="w-full px-4 py-3 rounded-xl bg-white dark:bg-gray-700 
-                       border-2 border-gray-200 dark:border-gray-600 
-                       focus:border-purple-500 transition-all outline-none
-                       text-gray-900 dark:text-white"
+              className="w-full px-4 py-3 rounded-lg bg-white border-2 border-gray-200 
+                       focus:border-gray-400 transition-all outline-none text-gray-900"
             />
           </div>
 
           <div className="flex items-end space-x-2">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            <button
               onClick={resetFilters}
-              className="px-6 py-3 rounded-xl border-2 border-gray-300 dark:border-gray-600 
-                       text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700
-                       transition-all"
+              className="px-6 py-3 rounded-lg border-2 border-gray-300 text-gray-700 
+                       font-medium hover:bg-gray-50 transition-all"
             >
               Reset
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white 
-                       px-6 py-3 rounded-xl hover:shadow-xl transition-all font-medium
-                       flex items-center justify-center gap-2"
+            </button>
+            <button
+              className="flex-1 bg-gray-900 text-white px-6 py-3 rounded-lg 
+                       hover:bg-gray-800 transition-all font-medium flex items-center 
+                       justify-center gap-2"
               onClick={() => (window.location.href = "/admin/add-shows")}
             >
               <FaPlus /> Add New Show
-            </motion.button>
+            </button>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Stats Cards */}
-      <motion.div
-        variants={container}
-        initial="hidden"
-        animate="show"
-        className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6"
-      >
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         {[
           {
             label: "Total Shows",
             value: shows.length,
             icon: FaFilm,
-            color: "from-blue-500 to-cyan-500",
           },
           {
             label: "Upcoming",
             value: shows.filter((s) => s.showStatus === "UPCOMING").length,
             icon: FaCalendar,
-            color: "from-purple-500 to-pink-500",
           },
           {
             label: "Ongoing",
             value: shows.filter((s) => s.showStatus === "ONGOING").length,
             icon: FaClock,
-            color: "from-green-500 to-emerald-500",
           },
           {
             label: "Completed",
             value: shows.filter((s) => s.showStatus === "COMPLETED").length,
             icon: FaTicketAlt,
-            color: "from-orange-500 to-red-500",
           },
         ].map((stat, idx) => (
-          <motion.div
+          <div
             key={idx}
-            variants={item}
-            whileHover={{ scale: 1.05, y: -5 }}
-            className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg border border-gray-200 dark:border-gray-700"
+            className="bg-white rounded-lg p-4 shadow-md border border-gray-200"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">
-                  {stat.label}
-                </p>
-                <p className="text-2xl font-bold mt-1 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                <p className="text-gray-500 text-sm">{stat.label}</p>
+                <p className="text-2xl font-bold mt-1 text-gray-900">
                   {stat.value}
                 </p>
               </div>
-              <div
-                className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} bg-opacity-10`}
-              >
-                <stat.icon
-                  className={`text-2xl bg-gradient-to-br ${stat.color} bg-clip-text text-transparent`}
-                />
+              <div className="p-3 rounded-lg bg-gray-100">
+                <stat.icon className="text-2xl text-gray-600" />
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
-      </motion.div>
+      </div>
 
       {/* Shows Table */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700"
-      >
+      <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
         {loading ? (
           <div className="flex justify-center items-center py-20">
             <div className="relative">
-              <div className="w-16 h-16 border-4 border-purple-200 dark:border-purple-900 rounded-full"></div>
-              <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
+              <div className="w-16 h-16 border-4 border-gray-200 rounded-full"></div>
+              <div className="w-16 h-16 border-4 border-gray-900 border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
             </div>
           </div>
         ) : shows.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                <tr className="bg-gray-900 text-white">
                   <th className="px-6 py-4 text-left font-semibold">Movie</th>
                   <th className="px-6 py-4 text-left font-semibold">Room</th>
-                  <th className="px-6 py-4 text-left font-semibold">
-                    Show Date
-                  </th>
-                  <th className="px-6 py-4 text-left font-semibold">
-                    Show Time
-                  </th>
+                  <th className="px-6 py-4 text-left font-semibold">Show Date</th>
+                  <th className="px-6 py-4 text-left font-semibold">Show Time</th>
                   <th className="px-6 py-4 text-left font-semibold">Price</th>
                   <th className="px-6 py-4 text-left font-semibold">Status</th>
                   <th className="px-6 py-4 text-left font-semibold">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {shows.map((show, index) => (
-                  <motion.tr
+                {shows.map((show) => (
+                  <tr
                     key={show.showId}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="border-b border-gray-200 dark:border-gray-700
-                             hover:bg-purple-50 dark:hover:bg-gray-700/50 transition-colors"
+                    className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div
-                          className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500
-                                    flex items-center justify-center text-white font-bold text-xl"
-                        >
+                        <div className="w-10 h-10 rounded-lg bg-gray-900 flex items-center justify-center text-white">
                           <FaFilm />
                         </div>
                         <div>
-                          <div className="font-medium text-gray-900 dark:text-white">
+                          <div className="font-medium text-gray-900">
                             {getMovieTitle(show.movieId)}
                           </div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400">
+                          <div className="text-sm text-gray-500">
                             Show #{show.showId}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                        <FaDoorOpen className="text-blue-500" />
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <FaDoorOpen className="text-gray-500" />
                         <span>{show.roomName || `Room #${show.roomId}`}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                        <FaCalendar className="text-purple-500" />
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <FaCalendar className="text-gray-500" />
                         <span>{formatDate(show.showDate)}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                        <FaClock className="text-purple-500" />
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <FaClock className="text-gray-500" />
                         <span>{formatTime(show.showTime)}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span
-                        className="px-3 py-1 rounded-full bg-green-100 dark:bg-green-900/30
-                                     text-green-700 dark:text-green-300 font-bold text-sm"
-                      >
+                      <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 font-bold text-sm">
                         {currency}
                         {parseFloat(show.price).toFixed(2)}
                       </span>
@@ -416,97 +349,75 @@ const ListShows = () => {
                       <div className="flex gap-2">
                         {show.showStatus !== "COMPLETED" ? (
                           <>
-                            <motion.button
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
+                            <button
                               onClick={() =>
                                 (window.location.href = `/admin/edit-show/${show.showId}`)
                               }
-                              className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600
-                                       flex items-center justify-center"
+                              className="p-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
                               title="Edit"
                             >
                               <FaEdit />
-                            </motion.button>
-                            <motion.button
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
+                            </button>
+                            <button
                               onClick={() => handleDelete(show.showId)}
-                              className="p-2 rounded-lg bg-red-500 text-white hover:bg-red-600
-                                       flex items-center justify-center"
+                              className="p-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
                               title="Delete"
                             >
                               <FaTrash />
-                            </motion.button>
+                            </button>
                           </>
                         ) : (
                           <span className="text-sm text-gray-500 italic px-2">
-                            Cannot edit completed show
+                            Cannot modify completed show
                           </span>
                         )}
                       </div>
                     </td>
-                  </motion.tr>
+                  </tr>
                 ))}
               </tbody>
             </table>
           </div>
         ) : (
           <div className="text-center py-12">
-            <FaFilm className="text-6xl text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-500 dark:text-gray-400 text-lg">
-              No shows found
-            </p>
-            <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">
+            <FaFilm className="text-6xl text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-500 text-lg">No shows found</p>
+            <p className="text-gray-400 text-sm mt-2">
               Try adjusting your filters or add a new show
             </p>
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="flex justify-center items-center gap-3 mt-6"
-        >
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+        <div className="flex justify-center items-center gap-3 mt-6">
+          <button
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             disabled={page === 0}
-            className="px-6 py-3 rounded-xl bg-white dark:bg-gray-800 
-                     border-2 border-gray-200 dark:border-gray-700
-                     text-gray-700 dark:text-white font-medium
-                     disabled:opacity-50 disabled:cursor-not-allowed
-                     hover:border-purple-500 transition-all shadow-lg"
+            className="px-6 py-3 rounded-lg bg-white border-2 border-gray-200
+                     text-gray-700 font-medium disabled:opacity-50 
+                     disabled:cursor-not-allowed hover:border-gray-400 
+                     transition-all shadow-md"
           >
             Previous
-          </motion.button>
+          </button>
 
-          <div
-            className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500
-                        text-white font-bold shadow-lg"
-          >
+          <div className="px-6 py-3 rounded-lg bg-gray-900 text-white font-bold shadow-md">
             Page {page + 1} of {totalPages}
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+          <button
             onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
             disabled={page >= totalPages - 1}
-            className="px-6 py-3 rounded-xl bg-white dark:bg-gray-800 
-                     border-2 border-gray-200 dark:border-gray-700
-                     text-gray-700 dark:text-white font-medium
-                     disabled:opacity-50 disabled:cursor-not-allowed
-                     hover:border-purple-500 transition-all shadow-lg"
+            className="px-6 py-3 rounded-lg bg-white border-2 border-gray-200
+                     text-gray-700 font-medium disabled:opacity-50 
+                     disabled:cursor-not-allowed hover:border-gray-400 
+                     transition-all shadow-md"
           >
             Next
-          </motion.button>
-        </motion.div>
+          </button>
+        </div>
       )}
     </div>
   );

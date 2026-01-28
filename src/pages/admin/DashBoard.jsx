@@ -13,7 +13,6 @@ import {
   getRevenueByDate,
   getTopMovies,
 } from "../../service/admin/BookingService";
-import { motion } from "framer-motion";
 import {
   FaTicketAlt,
   FaDollarSign,
@@ -45,7 +44,7 @@ ChartJS.register(
   Legend,
   ArcElement,
   PointElement,
-  LineElement
+  LineElement,
 );
 
 const DashBoard = () => {
@@ -54,7 +53,7 @@ const DashBoard = () => {
 
   const { statistics } = useSelector((state) => state.admin.bookings);
   const { revenueByDate, topMovies, loading } = useSelector(
-    (state) => state.admin.analytics
+    (state) => state.admin.analytics,
   );
 
   const [dateRange, setDateRange] = useState({
@@ -103,8 +102,8 @@ const DashBoard = () => {
       {
         label: "Revenue",
         data: revenueByDate?.map((item) => item.revenue / 100) || [],
-        borderColor: "rgb(147, 51, 234)",
-        backgroundColor: "rgba(147, 51, 234, 0.1)",
+        borderColor: "rgb(59, 130, 246)",
+        backgroundColor: "rgba(59, 130, 246, 0.1)",
         tension: 0.4,
         fill: true,
       },
@@ -119,15 +118,15 @@ const DashBoard = () => {
         data: topMovies?.map((item) => item.bookingCount) || [],
         backgroundColor: [
           "rgba(59, 130, 246, 0.8)",
-          "rgba(147, 51, 234, 0.8)",
-          "rgba(236, 72, 153, 0.8)",
-          "rgba(34, 197, 94, 0.8)",
-          "rgba(251, 146, 60, 0.8)",
-          "rgba(239, 68, 68, 0.8)",
-          "rgba(168, 85, 247, 0.8)",
-          "rgba(14, 165, 233, 0.8)",
-          "rgba(245, 158, 11, 0.8)",
-          "rgba(139, 92, 246, 0.8)",
+          "rgba(107, 114, 128, 0.8)",
+          "rgba(156, 163, 175, 0.8)",
+          "rgba(75, 85, 99, 0.8)",
+          "rgba(31, 41, 55, 0.8)",
+          "rgba(17, 24, 39, 0.8)",
+          "rgba(209, 213, 219, 0.8)",
+          "rgba(229, 231, 235, 0.8)",
+          "rgba(243, 244, 246, 0.8)",
+          "rgba(249, 250, 251, 0.8)",
         ],
       },
     ],
@@ -180,8 +179,8 @@ const DashBoard = () => {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="relative">
-          <div className="w-16 h-16 border-4 border-purple-200 dark:border-purple-900 rounded-full"></div>
-          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
+          <div className="w-16 h-16 border-4 border-gray-200 rounded-full"></div>
+          <div className="w-16 h-16 border-4 border-gray-900 border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
         </div>
       </div>
     );
@@ -192,20 +191,14 @@ const DashBoard = () => {
       <Title text1="Admin" text2="Dashboard" icon={FaChartLine} />
 
       {/* Date Range Filter */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
-      >
+      <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
         <div className="flex items-center gap-2 mb-4">
-          <FaClock className="text-purple-500" />
-          <h3 className="font-bold text-gray-800 dark:text-white">
-            Date Range
-          </h3>
+          <FaClock className="text-gray-600" />
+          <h3 className="font-bold text-gray-800">Date Range</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               From Date
             </label>
             <input
@@ -213,13 +206,12 @@ const DashBoard = () => {
               name="fromDate"
               value={dateRange.fromDate}
               onChange={handleDateRangeChange}
-              className="w-full px-4 py-2 rounded-xl bg-white dark:bg-gray-700 
-                       border-2 border-gray-200 dark:border-gray-600 
-                       focus:border-purple-500 transition-all outline-none"
+              className="w-full px-4 py-2 rounded-lg bg-white border-2 border-gray-200 
+                       focus:border-gray-400 transition-all outline-none text-black"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               To Date
             </label>
             <input
@@ -227,185 +219,107 @@ const DashBoard = () => {
               name="toDate"
               value={dateRange.toDate}
               onChange={handleDateRangeChange}
-              className="w-full px-4 py-2 rounded-xl bg-white dark:bg-gray-700 
-                       border-2 border-gray-200 dark:border-gray-600 
-                       focus:border-purple-500 transition-all outline-none"
+              className="w-full px-4 py-2 rounded-lg bg-white border-2 border-gray-200 
+                       focus:border-gray-400 transition-all outline-none text-black"
             />
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Statistics Cards */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.1 }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-      >
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
           {
             title: "Total Bookings",
             value: statistics?.totalBookings || 0,
-            change: "+12%",
-            isUp: true,
             icon: FaTicketAlt,
-            color: "from-blue-500 to-cyan-500",
-            bgColor: "bg-blue-500/10",
+            bgColor: "bg-blue-50",
+            iconColor: "text-blue-600",
           },
           {
             title: "Total Revenue",
-            value: `${currency}${(
-              (statistics?.totalRevenue || 0) / 100
-            ).toFixed(2)}`,
-            change: "+18%",
-            isUp: true,
+            value: `${currency}${((statistics?.totalRevenue || 0) / 100).toFixed(2)}`,
             icon: FaDollarSign,
-            color: "from-green-500 to-emerald-500",
-            bgColor: "bg-green-500/10",
+            bgColor: "bg-green-50",
+            iconColor: "text-green-600",
           },
           {
             title: "Confirmed",
             value: statistics?.confirmedBookings || 0,
-            change: "+8%",
-            isUp: true,
             icon: FaCheck,
-            color: "from-purple-500 to-pink-500",
-            bgColor: "bg-purple-500/10",
+            bgColor: "bg-gray-50",
+            iconColor: "text-gray-600",
           },
           {
             title: "Cancelled",
             value: statistics?.cancelledBookings || 0,
-            change: "-3%",
-            isUp: false,
             icon: FaTimes,
-            color: "from-red-500 to-orange-500",
-            bgColor: "bg-red-500/10",
+            bgColor: "bg-red-50",
+            iconColor: "text-red-600",
           },
         ].map((stat, index) => (
-          <motion.div
+          <div
             key={index}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: index * 0.1 }}
-            whileHover={{ scale: 1.05, y: -5 }}
-            className="relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800
-                     p-6 shadow-xl border border-gray-200 dark:border-gray-700"
+            className="bg-white rounded-xl p-6 shadow-md border border-gray-200"
           >
-            {/* Background Gradient */}
-            <div
-              className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${stat.color}
-                          opacity-10 rounded-full -mr-16 -mt-16`}
-            />
-
-            <div className="relative">
-              <div className="flex items-center justify-between mb-4">
-                <div className={`p-3 rounded-xl ${stat.bgColor}`}>
-                  <stat.icon
-                    className={`text-2xl bg-gradient-to-br ${stat.color}
-                                       bg-clip-text text-transparent`}
-                  />
-                </div>
-                <div
-                  className={`flex items-center gap-1 text-sm font-semibold
-                              ${stat.isUp ? "text-green-500" : "text-red-500"}`}
-                >
-                  {stat.isUp ? "↑" : "↓"}
-                  {stat.change}
-                </div>
+            <div className="flex items-center justify-between mb-4">
+              <div className={`p-3 rounded-lg ${stat.bgColor}`}>
+                <stat.icon className={`text-2xl ${stat.iconColor}`} />
               </div>
-
-              <h3 className="text-3xl font-bold mb-1 text-gray-900 dark:text-white">
-                {stat.value}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
-                {stat.title}
-              </p>
             </div>
-          </motion.div>
+            <h3 className="text-3xl font-bold mb-1 text-gray-900">
+              {stat.value}
+            </h3>
+            <p className="text-gray-600 text-sm">{stat.title}</p>
+          </div>
         ))}
-      </motion.div>
+      </div>
 
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Revenue Chart */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl
-                   border border-gray-200 dark:border-gray-700"
-        >
-          <h3
-            className="text-xl font-bold mb-4 bg-gradient-to-r from-purple-500 to-pink-500
-                       bg-clip-text text-transparent flex items-center gap-2"
-          >
+        <div className="lg:col-span-2 bg-white rounded-xl p-6 shadow-md border border-gray-200">
+          <h3 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
             <FaChartLine />
             Revenue Overview
           </h3>
           <div style={{ height: "300px" }}>
             <Line data={revenueChartData} options={chartOptions} />
           </div>
-        </motion.div>
+        </div>
 
         {/* Status Distribution */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl
-                   border border-gray-200 dark:border-gray-700"
-        >
-          <h3
-            className="text-xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-cyan-500
-                       bg-clip-text text-transparent"
-          >
+        <div className="bg-white rounded-xl p-6 shadow-md border border-gray-200">
+          <h3 className="text-xl font-bold mb-4 text-gray-900">
             Booking Status
           </h3>
           <div style={{ height: "300px" }}>
             <Pie data={statusChartData} options={pieOptions} />
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Top Movies */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl
-                 border border-gray-200 dark:border-gray-700"
-      >
-        <h3
-          className="text-xl font-bold mb-4 bg-gradient-to-r from-green-500 to-emerald-500
-                     bg-clip-text text-transparent"
-        >
+      <div className="bg-white rounded-xl p-6 shadow-md border border-gray-200">
+        <h3 className="text-xl font-bold mb-4 text-gray-900">
           Top 10 Movies by Bookings
         </h3>
         <div style={{ height: "400px" }}>
           <Bar data={topMoviesChartData} options={chartOptions} />
         </div>
-      </motion.div>
+      </div>
 
       {/* Top Movies Table */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7 }}
-        className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden
-                 border border-gray-200 dark:border-gray-700"
-      >
+      <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
         <div className="p-6">
-          <h3
-            className="text-xl font-bold mb-4 bg-gradient-to-r from-purple-500 to-pink-500
-                       bg-clip-text text-transparent"
-          >
+          <h3 className="text-xl font-bold text-gray-900">
             Popular Movies Details
           </h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+              <tr className="bg-gray-900 text-white">
                 <th className="px-6 py-4 text-left font-semibold">Rank</th>
                 <th className="px-6 py-4 text-left font-semibold">
                   Movie Title
@@ -416,44 +330,37 @@ const DashBoard = () => {
             </thead>
             <tbody>
               {topMovies?.map((movie, index) => (
-                <motion.tr
+                <tr
                   key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="border-b border-gray-200 dark:border-gray-700
-                           hover:bg-purple-50 dark:hover:bg-gray-700/50 transition-colors"
+                  className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
                 >
                   <td className="px-6 py-4">
-                    <div
-                      className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500
-                                 flex items-center justify-center text-white font-bold"
-                    >
+                    <div className="w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center text-white font-bold">
                       {index + 1}
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="font-medium text-gray-900 dark:text-white">
+                    <span className="font-medium text-gray-900">
                       {movie.title}
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="font-bold text-blue-600 dark:text-blue-400">
+                    <span className="font-bold text-blue-600">
                       {movie.bookingCount}
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="font-bold text-green-600 dark:text-green-400">
+                    <span className="font-bold text-green-600">
                       {currency}
                       {(movie.revenue / 100).toFixed(2)}
                     </span>
                   </td>
-                </motion.tr>
+                </tr>
               ))}
             </tbody>
           </table>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

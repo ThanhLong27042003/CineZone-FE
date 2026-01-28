@@ -1,10 +1,12 @@
 import { authHttp } from "../../../utils/baseUrl";
 
-export const getAllShowsForAdmin = (page, size, search) => {
+export const getAllShowsForAdmin = (page, size, movieId, dateTime) => {
+  const params = {};
+  if (movieId) params.movieId = movieId;
+  if (dateTime) params.dateTime = dateTime;
+  
   return authHttp
-    .get(`/admin/shows/getAllShows/${page}/${size}`, {
-      params: { search },
-    })
+    .get(`/admin/shows/getAllShows/${page}/${size}`, { params })
     .then((res) => res.data.result);
 };
 

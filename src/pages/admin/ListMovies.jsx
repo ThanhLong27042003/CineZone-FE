@@ -11,14 +11,12 @@ import {
   deleteMovie,
   getAllMoviesForAdmin,
 } from "../../service/admin/MovieService";
-import { motion } from "framer-motion";
 import {
   FaFilm,
   FaStar,
   FaClock,
   FaCalendar,
   FaSearch,
-  FaFilter,
   FaEdit,
   FaTrash,
   FaPlus,
@@ -36,11 +34,11 @@ const ListMovies = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
-  // Debounce search term - chỉ update sau 1 giây
+  // Debounce search term
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
-    }, 1000); // 1 giây debounce
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, [searchTerm]);
@@ -65,28 +63,15 @@ const ListMovies = () => {
   };
 
   const handleDelete = async (movieId) => {
-    if (window.confirm("Are you sure you want to delete this movie?")) {
+    if (window.confirm("Are you sure you want to delete this movie? This action cannot be undone.")) {
       try {
         await deleteMovie(movieId);
         toast.success("Movie deleted successfully");
         fetchMovies();
       } catch (error) {
-        toast.error("Failed to delete movie");
+        toast.error(error?.response?.data?.message || "Failed to delete movie. It may have associated shows or bookings.");
       }
     }
-  };
-
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 },
-    },
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 },
   };
 
   const formatDate = (dateString) => {
@@ -104,11 +89,7 @@ const ListMovies = () => {
       <Title text1="List" text2="Movies" icon={FaFilm} />
 
       {/* Search and Add Button Bar */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col sm:flex-row gap-4 mb-6"
-      >
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <div className="relative flex-1">
           <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
@@ -116,50 +97,38 @@ const ListMovies = () => {
             placeholder="Search movies..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 rounded-xl bg-white dark:bg-gray-800
-                     border-2 border-gray-200 dark:border-gray-700
-                     focus:border-purple-500 transition-all outline-none shadow-lg
-                     text-gray-900 dark:text-white"
+            className="w-full pl-12 pr-4 py-3 rounded-lg bg-white
+                     border-2 border-gray-200 focus:border-gray-400 
+                     transition-all outline-none shadow-md text-gray-900"
           />
           {searchTerm !== debouncedSearchTerm && (
             <div className="absolute right-4 top-1/2 -translate-y-1/2">
-              <div className="w-5 h-5 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-5 h-5 border-2 border-gray-600 border-t-transparent rounded-full animate-spin"></div>
             </div>
           )}
         </div>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+        <button
           onClick={() => (window.location.href = "/admin/create-movie")}
-          className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500
-                   text-white font-medium shadow-lg hover:shadow-xl transition-all
-                   flex items-center gap-2 justify-center whitespace-nowrap"
+          className="px-6 py-3 rounded-lg bg-gray-900 text-white font-medium 
+                   shadow-md hover:bg-gray-800 transition-all flex items-center 
+                   gap-2 justify-center whitespace-nowrap"
         >
           <FaPlus /> Add New Movie
-        </motion.button>
-      </motion.div>
+        </button>
+      </div>
 
       {/* Stats Cards */}
-      <motion.div
-        variants={container}
-        initial="hidden"
-        animate="show"
-        className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6"
-      >
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         {[
           {
             label: "Total Movies",
             value: movies?.length || 0,
             icon: FaFilm,
-            color: "from-blue-500 to-cyan-500",
           },
           {
             label: "Total Runtime",
-            value: `${
-              movies?.reduce((acc, m) => acc + (m.runtime || 0), 0) || 0
-            } min`,
+            value: `${movies?.reduce((acc, m) => acc + (m.runtime || 0), 0) || 0} min`,
             icon: FaClock,
-            color: "from-purple-500 to-pink-500",
           },
           {
             label: "Avg Rating",
@@ -171,84 +140,59 @@ const ListMovies = () => {
                   ).toFixed(1)
                 : "0.0",
             icon: FaStar,
-            color: "from-green-500 to-emerald-500",
           },
           {
             label: "Total Votes",
             value: movies?.reduce((acc, m) => acc + (m.voteCount || 0), 0) || 0,
             icon: FaCalendar,
-            color: "from-orange-500 to-red-500",
           },
         ].map((stat, idx) => (
-          <motion.div
+          <div
             key={idx}
-            variants={item}
-            whileHover={{ scale: 1.05, y: -5 }}
-            className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg border border-gray-200 dark:border-gray-700"
+            className="bg-white rounded-lg p-4 shadow-md border border-gray-200"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">
-                  {stat.label}
-                </p>
-                <p className="text-2xl font-bold mt-1 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                <p className="text-gray-500 text-sm">{stat.label}</p>
+                <p className="text-2xl font-bold mt-1 text-gray-900">
                   {stat.value}
                 </p>
               </div>
-              <div
-                className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} bg-opacity-10`}
-              >
-                <stat.icon
-                  className={`text-2xl bg-gradient-to-br ${stat.color} bg-clip-text text-transparent`}
-                />
+              <div className="p-3 rounded-lg bg-gray-100">
+                <stat.icon className="text-2xl text-gray-600" />
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
-      </motion.div>
+      </div>
 
       {/* Movies Table */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700"
-      >
+      <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
         {loading ? (
           <div className="flex justify-center items-center py-20">
             <div className="relative">
-              <div className="w-16 h-16 border-4 border-purple-200 dark:border-purple-900 rounded-full"></div>
-              <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
+              <div className="w-16 h-16 border-4 border-gray-200 rounded-full"></div>
+              <div className="w-16 h-16 border-4 border-gray-900 border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
             </div>
           </div>
         ) : movies && movies.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-                  <th className="px-6 py-4 text-left font-semibold">
-                    Movie Details
-                  </th>
-                  <th className="px-6 py-4 text-left font-semibold">
-                    Release Date
-                  </th>
-                  <th className="px-6 py-4 text-left font-semibold">
-                    Duration
-                  </th>
+                <tr className="bg-gray-900 text-white">
+                  <th className="px-6 py-4 text-left font-semibold">Movie Details</th>
+                  <th className="px-6 py-4 text-left font-semibold">Release Date</th>
+                  <th className="px-6 py-4 text-left font-semibold">Duration</th>
                   <th className="px-6 py-4 text-left font-semibold">Rating</th>
                   <th className="px-6 py-4 text-left font-semibold">Genres</th>
                   <th className="px-6 py-4 text-left font-semibold">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {movies.map((movie, index) => (
-                  <motion.tr
+                {movies.map((movie) => (
+                  <tr
                     key={movie.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="border-b border-gray-200 dark:border-gray-700
-                             hover:bg-purple-50 dark:hover:bg-gray-700/50 transition-colors"
+                    className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
@@ -261,38 +205,34 @@ const ListMovies = () => {
                           }}
                         />
                         <div className="flex-1">
-                          <h3 className="font-bold text-gray-900 dark:text-white mb-1">
+                          <h3 className="font-bold text-gray-900 mb-1">
                             {movie.title}
                           </h3>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                          <p className="text-sm text-gray-600 line-clamp-2">
                             {movie.overview || "No description available"}
                           </p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                        <FaCalendar className="text-purple-500" />
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <FaCalendar className="text-gray-500" />
                         <span>{formatDate(movie.releaseDate)}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                        <FaClock className="text-purple-500" />
-                        <span>
-                          {movie.runtime ? `${movie.runtime} min` : "N/A"}
-                        </span>
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <FaClock className="text-gray-500" />
+                        <span>{movie.runtime ? `${movie.runtime} min` : "N/A"}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <FaStar className="text-yellow-500" />
-                        <span className="font-bold text-gray-900 dark:text-white">
-                          {movie.voteAverage
-                            ? movie.voteAverage.toFixed(1)
-                            : "N/A"}
+                        <span className="font-bold text-gray-900">
+                          {movie.voteAverage ? movie.voteAverage.toFixed(1) : "N/A"}
                         </span>
-                        <span className="text-sm text-gray-500 dark:text-gray-400">
+                        <span className="text-sm text-gray-500">
                           ({movie.voteCount || 0})
                         </span>
                       </div>
@@ -303,22 +243,16 @@ const ListMovies = () => {
                           movie.genres.slice(0, 2).map((genre) => (
                             <span
                               key={genre.id}
-                              className="px-2 py-1 rounded-full bg-purple-100 dark:bg-purple-900/30
-                                       text-purple-700 dark:text-purple-300 font-medium text-xs"
+                              className="px-2 py-1 rounded-full bg-gray-100 text-gray-700 font-medium text-xs"
                             >
                               {genre.name}
                             </span>
                           ))
                         ) : (
-                          <span className="text-sm text-gray-500 dark:text-gray-400">
-                            No genres
-                          </span>
+                          <span className="text-sm text-gray-500">No genres</span>
                         )}
                         {movie.genres && movie.genres.length > 2 && (
-                          <span
-                            className="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700
-                                         text-gray-600 dark:text-gray-300 text-xs"
-                          >
+                          <span className="px-2 py-1 rounded-full bg-gray-100 text-gray-600 text-xs">
                             +{movie.genres.length - 2}
                           </span>
                         )}
@@ -326,88 +260,66 @@ const ListMovies = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex gap-2">
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
+                        <button
                           onClick={() =>
                             (window.location.href = `/admin/edit-movie/${movie.id}`)
                           }
-                          className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600
-                                   flex items-center justify-center"
+                          className="p-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
                           title="Edit"
                         >
                           <FaEdit />
-                        </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
+                        </button>
+                        <button
                           onClick={() => handleDelete(movie.id)}
-                          className="p-2 rounded-lg bg-red-500 text-white hover:bg-red-600
-                                   flex items-center justify-center"
+                          className="p-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
                           title="Delete"
                         >
                           <FaTrash />
-                        </motion.button>
+                        </button>
                       </div>
                     </td>
-                  </motion.tr>
+                  </tr>
                 ))}
               </tbody>
             </table>
           </div>
         ) : (
           <div className="text-center py-12">
-            <FaFilm className="text-6xl text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-500 dark:text-gray-400 text-lg">
-              No movies found
-            </p>
+            <FaFilm className="text-6xl text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-500 text-lg">No movies found</p>
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="flex justify-center items-center gap-3 mt-6"
-        >
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+        <div className="flex justify-center items-center gap-3 mt-6">
+          <button
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             disabled={page === 0}
-            className="px-6 py-3 rounded-xl bg-white dark:bg-gray-800 
-                     border-2 border-gray-200 dark:border-gray-700
-                     text-gray-700 dark:text-white font-medium
-                     disabled:opacity-50 disabled:cursor-not-allowed
-                     hover:border-purple-500 transition-all shadow-lg"
+            className="px-6 py-3 rounded-lg bg-white border-2 border-gray-200
+                     text-gray-700 font-medium disabled:opacity-50 
+                     disabled:cursor-not-allowed hover:border-gray-400 
+                     transition-all shadow-md"
           >
             Previous
-          </motion.button>
+          </button>
 
-          <div
-            className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500
-                        text-white font-bold shadow-lg"
-          >
+          <div className="px-6 py-3 rounded-lg bg-gray-900 text-white font-bold shadow-md">
             Page {page + 1} of {totalPages}
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+          <button
             onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
             disabled={page >= totalPages - 1}
-            className="px-6 py-3 rounded-xl bg-white dark:bg-gray-800 
-                     border-2 border-gray-200 dark:border-gray-700
-                     text-gray-700 dark:text-white font-medium
-                     disabled:opacity-50 disabled:cursor-not-allowed
-                     hover:border-purple-500 transition-all shadow-lg"
+            className="px-6 py-3 rounded-lg bg-white border-2 border-gray-200
+                     text-gray-700 font-medium disabled:opacity-50 
+                     disabled:cursor-not-allowed hover:border-gray-400 
+                     transition-all shadow-md"
           >
             Next
-          </motion.button>
-        </motion.div>
+          </button>
+        </div>
       )}
     </div>
   );

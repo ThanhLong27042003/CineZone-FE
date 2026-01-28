@@ -21,15 +21,15 @@ import VNPayCallback from "./pages/VNPayCallback";
 import PayPalCallback from "./pages/PayPalCallback";
 import PaymentCancelled from "./pages/PaymentCancelled";
 import ListUsers from "./pages/admin/ListUsers";
-import CreateUser from "./components/admin/CreateUser";
-import EditUser from "./components/admin/EditUser";
 import ListMovies from "./pages/admin/ListMovies";
 import CreateMovie from "./components/admin/CreateMovie";
 import EditMovie from "./components/admin/EditMovie";
 import EditShows from "./components/admin/EditShows";
-import AIInsights from "./pages/AIInsights";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminProtectedRoute from "./components/admin/AdminProtectedRoute";
+import RoomManagement from "./components/admin/RoomManagement";
+import GenreManagement from "./components/admin/GenreManagement";
+import CastManagement from "./components/admin/CastManagement";
 
 const App = () => {
   const location = useLocation();
@@ -80,13 +80,13 @@ const App = () => {
           <Route path="list-shows" element={<ListShows />} />
           <Route path="list-bookings" element={<ListBookings />} />
           <Route path="list-movies" element={<ListMovies />} />
+          <Route path="list-genres" element={<GenreManagement />} />
+          <Route path="list-casts" element={<CastManagement />} />
+          <Route path="list-rooms" element={<RoomManagement />} />
           <Route path="list-users" element={<ListUsers />} />
           <Route path="create-movie" element={<CreateMovie />} />
           <Route path="edit-movie/:movieId" element={<EditMovie />} />
-          <Route path="create-user" element={<CreateUser />} />
-          <Route path="edit-user/:id" element={<EditUser />} />
           <Route path="edit-show/:showId" element={<EditShows />} />
-          <Route path="ai-insights" element={<AIInsights />} />
         </Route>
       </Routes>
       <Toaster position="top-center" reverseOrder={false} />
