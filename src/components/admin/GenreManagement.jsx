@@ -19,19 +19,42 @@ const GenreManagement = () => {
     name: "",
   });
 
+  // Pagination and Search states
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [search, setSearch] = useState("");
+  const pageSize = 10;
+
   useEffect(() => {
     fetchGenres();
-  }, []);
+  }, [currentPage, search]);
 
   const fetchGenres = async () => {
     try {
       setLoading(true);
-      const data = await getAllGenresForAdmin();
-      setGenres(data || []);
+      const data = await getAllGenresForAdmin(currentPage, pageSize, search);
+      if (data) {
+        setGenres(data.content || []);
+        setTotalPages(data.totalPages || 0);
+      } else {
+        setGenres([]);
+        setTotalPages(0);
+      }
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to fetch genres");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    setCurrentPage(0); // Reset to first page on search
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 0 && newPage < totalPages) {
+      setCurrentPage(newPage);
     }
   };
 
@@ -96,15 +119,29 @@ const GenreManagement = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
         <Title text1="Genre" text2="Management" icon={FaTags} />
-        <button
-          onClick={openCreateModal}
-          className="px-6 py-3 rounded-lg bg-gray-900 text-white font-medium 
-                   shadow-md flex items-center gap-2 hover:bg-gray-800 transition-colors"
-        >
-          <FaPlus /> Add Genre
-        </button>
+        
+        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+          {/* Search Bar */}
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search genres..."
+              value={search}
+              onChange={handleSearchChange}
+              className="w-full sm:w-64 px-4 py-3 rounded-lg border border-gray-300 focus:border-gray-900 focus:ring-1 focus:ring-gray-900 outline-none transition-all text-gray-900"
+            />
+          </div>
+
+          <button
+            onClick={openCreateModal}
+            className="px-6 py-3 rounded-lg bg-gray-900 text-white font-medium 
+                     shadow-md flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors"
+          >
+            <FaPlus /> Add Genre
+          </button>
+        </div>
       </div>
 
       {loading ? (
@@ -162,11 +199,36 @@ const GenreManagement = () => {
                   </tbody>
                 </table>
               </div>
+              
+              {/* Pagination Controls */}
+              <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
+                <div className="text-sm text-gray-500">
+                  Page {currentPage + 1} of {totalPages}
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 0}
+                    className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 
+                             hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage >= totalPages - 1}
+                    className="px-4 py-2 rounded-lg bg-gray-900 text-white 
+                             hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="text-center py-12 bg-white rounded-lg shadow-md border border-gray-200">
               <FaTags className="text-6xl text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500 text-lg">No genres found</p>
+              <p className="text-gray-500 text-lg">No genres found matching your search</p>
             </div>
           )}
         </>
@@ -207,7 +269,7 @@ const GenreManagement = () => {
                   }
                   required
                   className="w-full px-4 py-2 rounded-lg border-2 border-gray-300
-                           focus:border-gray-500 outline-none transition-colors"
+                           focus:border-gray-500 outline-none transition-colors text-gray-900"
                   placeholder="e.g., Action, Comedy"
                 />
               </div>

@@ -1,7 +1,9 @@
 import { authHttp } from "../../../utils/baseUrl";
 
-export const getAllCastsForAdmin = () => {
-  return authHttp.get("/cast/getAllCast").then((res) => res.data.result);
+export const getAllCastsForAdmin = (page = 0, size = 10, search = "") => {
+  return authHttp
+    .get("/cast/getAllCast", { params: { page, size, search } })
+    .then((res) => res.data.result);
 };
 
 export const createCast = (formData) => {

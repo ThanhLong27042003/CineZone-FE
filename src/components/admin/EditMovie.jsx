@@ -4,9 +4,9 @@ import Title from "../../components/admin/Title";
 import { toast } from "react-hot-toast";
 import { getMovieByIdApi } from "../../redux/reducer/FilmReducer";
 import { updateMovie } from "../../service/admin/MovieService";
-import { getAllGenre } from "../../service/GenreService";
-import { getAllCast } from "../../service/CastService";
-import { FaFilm, FaSave, FaTimes } from "react-icons/fa";
+import { getAllGenresForAdmin } from "../../service/admin/GenreService";
+import { getAllCastsForAdmin } from "../../service/admin/CastService";
+import { FaFilm, FaSave, FaTimes, FaSearch } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 
 const EditMovie = () => {
@@ -29,6 +29,10 @@ const EditMovie = () => {
   const [casts, setCasts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
+  
+  const [genreSearch, setGenreSearch] = useState("");
+  const [castSearch, setCastSearch] = useState("");
+
   const { film } = useSelector((state) => state.FilmReducer);
   const dispatch = useDispatch();
 
@@ -61,12 +65,12 @@ const EditMovie = () => {
     const fetchOthers = async () => {
       try {
         const [genresResponse, castsResponse] = await Promise.all([
-          getAllGenre(),
-          getAllCast(),
+          getAllGenresForAdmin(0, 1000, ""),
+          getAllCastsForAdmin(0, 1000, ""),
         ]);
 
-        setGenres(genresResponse);
-        setCasts(castsResponse);
+        setGenres(genresResponse.content || []);
+        setCasts(castsResponse.content || []);
       } catch (err) {
         toast.error("Failed to fetch genres/casts");
       }
@@ -306,12 +310,26 @@ const EditMovie = () => {
 
         {/* Genres */}
         <div className="mb-8">
-          <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <div className="w-1 h-6 bg-gray-900 rounded"></div>
-            Genres
-          </h3>
+          <div className="flex items-center justify-between mb-4">
+             <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+              <div className="w-1 h-6 bg-gray-900 rounded"></div>
+              Genres
+            </h3>
+            <div className="relative">
+              <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search Genres..."
+                value={genreSearch}
+                onChange={(e) => setGenreSearch(e.target.value)}
+                className="pl-9 pr-4 py-2 rounded-lg border border-gray-200 focus:border-gray-500 outline-none text-gray-900"
+              />
+            </div>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-            {genres.map((genre) => (
+            {genres
+              .filter((g) => g.name.toLowerCase().includes(genreSearch.toLowerCase()))
+              .map((genre) => (
               <label
                 key={genre.id}
                 className={`flex items-center gap-2 p-3 rounded-lg cursor-pointer transition-all
@@ -335,13 +353,27 @@ const EditMovie = () => {
 
         {/* Cast */}
         <div className="mb-8">
-          <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <div className="w-1 h-6 bg-gray-900 rounded"></div>
-            Cast Members
-          </h3>
-          <div className="max-h-96 overflow-y-auto border-2 border-gray-200 rounded-lg p-4">
+           <div className="flex items-center justify-between mb-4">
+             <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+              <div className="w-1 h-6 bg-gray-900 rounded"></div>
+              Cast Members
+            </h3>
+            <div className="relative">
+              <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search Cast..."
+                value={castSearch}
+                onChange={(e) => setCastSearch(e.target.value)}
+                className="pl-9 pr-4 py-2 rounded-lg border border-gray-200 focus:border-gray-500 outline-none text-gray-900"
+              />
+            </div>
+          </div>
+          <div className="max-h-96 overflow-y-auto border-2 border-gray-200 rounded-lg p-4 custom-scrollbar">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {casts.map((cast) => (
+              {casts
+                .filter((c) => c.name.toLowerCase().includes(castSearch.toLowerCase()))
+                .map((cast) => (
                 <label
                   key={cast.id}
                   className={`flex items-center gap-2 p-3 rounded-lg cursor-pointer transition-all

@@ -1,11 +1,11 @@
 import { authHttp } from "../../../utils/baseUrl";
 
 export const getAllBookingsForAdmin = (page, size, filters = {}) => {
-  const { userId, showId, status, fromDate, toDate } = filters;
+  const { userName, showId, status, fromDate, toDate } = filters;
 
   const params = {};
 
-  if (userId) params.userId = userId;
+  if (userName) params.userName = userName;
   if (showId) params.showId = showId;
   if (status) params.status = status;
   if (fromDate) params.fromDate = fromDate;

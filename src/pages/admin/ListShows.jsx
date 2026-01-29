@@ -37,7 +37,8 @@ const ListShows = () => {
   const [page, setPage] = useState(0);
   const [filters, setFilters] = useState({
     movieId: "",
-    date: "",
+    startDate: "",
+    endDate: "",
   });
   const [movies, setMovies] = useState([]);
   const [debouncedFilters, setDebouncedFilters] = useState(filters);
@@ -70,16 +71,21 @@ const ListShows = () => {
     try {
       dispatch(setShowsLoading(true));
 
-      let dateTimeFilter = null;
-      if (debouncedFilters.date) {
-        dateTimeFilter = debouncedFilters.date + "T00:00:00";
+      let start = null;
+      let end = null;
+      if (debouncedFilters.startDate) {
+        start = debouncedFilters.startDate + "T00:00:00";
+      }
+      if (debouncedFilters.endDate) {
+        end = debouncedFilters.endDate + "T23:59:59";
       }
 
       const response = await getAllShowsForAdmin(
         page,
         10,
         debouncedFilters.movieId || null,
-        dateTimeFilter
+        start,
+        end
       );
 
       dispatch(setShows(response || { content: [], totalPages: 0, number: 0 }));
@@ -113,7 +119,8 @@ const ListShows = () => {
   const resetFilters = () => {
     setFilters({
       movieId: "",
-      date: "",
+      startDate: "",
+      endDate: "",
     });
     setPage(0);
   };
@@ -170,8 +177,8 @@ const ListShows = () => {
 
       {/* Search and Filter Bar */}
       <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="col-span-1">
             <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
               <FaFilm className="text-gray-500" />
               Filter by Movie
@@ -192,22 +199,38 @@ const ListShows = () => {
             </select>
           </div>
 
-          <div>
+          <div className="col-span-1">
             <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
               <FaCalendar className="text-gray-500" />
-              Filter by Date
+              Start Date
             </label>
             <input
               type="date"
-              name="date"
-              value={filters.date}
+              name="startDate"
+              value={filters.startDate || ""}
               onChange={handleFilterChange}
               className="w-full px-4 py-3 rounded-lg bg-white border-2 border-gray-200 
                        focus:border-gray-400 transition-all outline-none text-gray-900"
             />
           </div>
 
-          <div className="flex items-end space-x-2">
+          <div className="col-span-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+              <FaCalendar className="text-gray-500" />
+              End Date
+            </label>
+            <input
+              type="date"
+              name="endDate"
+              value={filters.endDate || ""}
+              onChange={handleFilterChange}
+              min={filters.startDate}
+              className="w-full px-4 py-3 rounded-lg bg-white border-2 border-gray-200 
+                       focus:border-gray-400 transition-all outline-none text-gray-900"
+            />
+          </div>
+
+          <div className="col-span-1 flex items-end space-x-2">
             <button
               onClick={resetFilters}
               className="px-6 py-3 rounded-lg border-2 border-gray-300 text-gray-700 

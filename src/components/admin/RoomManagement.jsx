@@ -205,7 +205,7 @@ const RoomManagement = () => {
                   }
                   required
                   className="w-full px-4 py-2 rounded-lg border-2 border-gray-300
-                           focus:border-gray-500 outline-none transition-colors"
+                           focus:border-gray-500 outline-none transition-colors text-gray-900"
                   placeholder="e.g., Room A, Cinema Hall 1"
                 />
               </div>
@@ -222,7 +222,7 @@ const RoomManagement = () => {
                   }
                   min="1"
                   className="w-full px-4 py-2 rounded-lg border-2 border-gray-300
-                           focus:border-gray-500 outline-none transition-colors"
+                           focus:border-gray-500 outline-none transition-colors text-gray-900"
                   placeholder="Number of seats"
                 />
               </div>
@@ -238,7 +238,7 @@ const RoomManagement = () => {
                   }
                   rows={3}
                   className="w-full px-4 py-2 rounded-lg border-2 border-gray-300
-                           focus:border-gray-500 outline-none resize-none transition-colors"
+                           focus:border-gray-500 outline-none resize-none transition-colors text-gray-900"
                   placeholder="Optional description"
                 />
               </div>

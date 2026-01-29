@@ -23,6 +23,8 @@ const AddShows = () => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [searchMovie, setSearchMovie] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -31,23 +33,43 @@ const AddShows = () => {
   const [dateTimeInput, setDateTimeInput] = useState("");
 
   useEffect(() => {
-    fetchData();
+    fetchInitialData();
   }, []);
 
-  const fetchData = async () => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchMovie);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchMovie]);
+
+  useEffect(() => {
+    fetchMovies();
+  }, [debouncedSearch]);
+
+  const fetchInitialData = async () => {
     try {
       setLoading(true);
-      const [moviesRes, roomsRes] = await Promise.all([
-        getAllMoviesForAdmin(0, 100, null),
+      const [roomsRes] = await Promise.all([
         getAllRooms(),
       ]);
-
-      setMovies(moviesRes.content || []);
       setRooms(roomsRes || []);
+      // Movies will be fetched by the other useEffect
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to load data");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchMovies = async () => {
+    try {
+       // Only show specific loading for movies if not initial load
+       // Or handle loading state nicely
+       const response = await getAllMoviesForAdmin(0, 100, debouncedSearch || null);
+       setMovies(response.content || []);
+    } catch (error) {
+      console.error("Failed to fetch movies", error);
     }
   };
 
@@ -227,10 +249,23 @@ const AddShows = () => {
 
       {/* Movies Grid */}
       <div>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col md:flex-row items-center justify-between mb-4 gap-4">
           <h2 className="text-2xl font-bold text-gray-900">Select Movie</h2>
+          
+          {/* Search Input */}
+          <div className="w-full md:w-auto relative">
+             <input 
+                type="text"
+                placeholder="Search movies..."
+                value={searchMovie}
+                onChange={(e) => setSearchMovie(e.target.value)}
+                className="w-full md:w-64 px-4 py-2 rounded-lg border-2 border-gray-200 
+                         focus:border-gray-500 outline-none transition-all placeholder:text-gray-400 text-gray-900"
+             />
+          </div>
+
           <span className="px-4 py-2 rounded-full bg-gray-100 text-gray-700 font-medium">
-            {movies.length} Movies
+            {movies.length} Results
           </span>
         </div>
 
@@ -358,7 +393,7 @@ const AddShows = () => {
               onChange={(e) => setShowPrice(e.target.value)}
               placeholder="Enter show price"
               className="w-full pl-12 pr-4 py-4 rounded-lg border-2 border-gray-300
-                       bg-gray-50 focus:border-gray-500 outline-none text-lg font-medium transition-all"
+                       bg-gray-50 focus:border-gray-500 outline-none text-lg font-medium transition-all text-gray-900"
             />
           </div>
         </div>
@@ -379,7 +414,7 @@ const AddShows = () => {
               onChange={(e) => setDateTimeInput(e.target.value)}
               min={new Date().toISOString().slice(0, 16)}
               className="flex-1 px-4 py-4 rounded-lg border-2 border-gray-300
-                       bg-gray-50 focus:border-gray-500 outline-none transition-all"
+                       bg-gray-50 focus:border-gray-500 outline-none transition-all text-gray-900"
             />
             <button
               onClick={handleDateTimeAdd}
@@ -431,7 +466,7 @@ const AddShows = () => {
                         className="flex items-center gap-2 px-4 py-2 rounded-lg
                                  bg-white border-2 border-gray-300 shadow-sm group"
                       >
-                        <span className="font-medium">⏰ {time}</span>
+                        <span className="font-medium text-gray-900">⏰ {time}</span>
                         <button
                           onClick={() => handleRemoveTime(date, time)}
                           className="text-red-500 hover:text-red-700 transition-colors"

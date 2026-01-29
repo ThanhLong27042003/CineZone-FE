@@ -136,11 +136,11 @@ const MovieDetails = () => {
               <motion.div className="lg:col-span-2" {...fadeInLeft}>
                 <div className="relative group">
                   <img
-                    src={film.posterPath}
-                    alt={film.title}
+                    src={film?.posterPath}
+                    alt={film?.title}
                     className="w-full max-w-md mx-auto lg:mx-0 rounded-2xl shadow-2xl transition-transform duration-500 group-hover:scale-105"
                   />
-                  {film.trailer && (
+                  {film?.trailer && (
                     <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                       <motion.button
                         whileHover={{ scale: 1.1 }}
@@ -171,24 +171,24 @@ const MovieDetails = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, duration: 0.6 }}
                   >
-                    {film.title}
+                    {film?.title}
                   </motion.h1>
 
                   <div className="flex items-center gap-6 mb-6">
                     <div className="flex items-center gap-2">
                       <StarIcon className="w-5 h-5 text-yellow-400 fill-yellow-400" />
                       <span className="text-white font-semibold">
-                        {film.voteAverage.toFixed(1)}
+                        {film?.voteAverage?.toFixed(1)}
                       </span>
                       <span className="text-gray-400">User Rating</span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-400">
                       <Clock className="w-4 h-4" />
-                      <span>{timeFormat(film.runtime)}</span>
+                      <span>{timeFormat(film?.runtime)}</span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-400">
                       <Calendar className="w-4 h-4" />
-                      <span>{film.releaseDate?.split("-")[0] || ""}</span>
+                      <span>{film?.releaseDate?.split("-")[0] || ""}</span>
                     </div>
                   </div>
 
@@ -198,11 +198,11 @@ const MovieDetails = () => {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.5, duration: 0.6 }}
                   >
-                    {film.overview}
+                    {film?.overview}
                   </motion.p>
 
                   <div className="flex flex-wrap gap-2 mb-8">
-                    {film.genres.map((genre, index) => (
+                    {film?.genres?.map((genre, index) => (
                       <motion.span
                         key={genre.id}
                         initial={{ opacity: 0, scale: 0.8 }}
@@ -221,7 +221,7 @@ const MovieDetails = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.7, duration: 0.6 }}
                   >
-                    {film.trailer && (
+                    {film?.trailer && (
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -285,7 +285,7 @@ const MovieDetails = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              {film.casts.slice(0, 12).map((cast, index) => (
+              {film?.casts?.slice(0, 12).map((cast, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 30 }}
@@ -367,7 +367,7 @@ const MovieDetails = () => {
               {/* ✅ SỬA: Dùng recommendations thay vì arrFilm */}
               {(recommendations.length > 0
                 ? recommendations
-                : arrFilm.slice(0, 4)
+                : arrFilm?.slice(0, 4)
               ).map((movie, index) => (
                 <motion.div
                   key={movie.id}
@@ -406,7 +406,7 @@ const MovieDetails = () => {
 
       {/* ✨ NEW: Trailer Modal ✨ */}
       <AnimatePresence>
-        {showTrailer && film.trailer && (
+        {showTrailer && film?.trailer && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -436,8 +436,8 @@ const MovieDetails = () => {
               {/* Video Container */}
               <div className="relative w-full pt-[56.25%] bg-black rounded-xl overflow-hidden shadow-2xl border border-gray-800">
                 <iframe
-                  src={`${film.trailer}?autoplay=1`}
-                  title={`${film.title} Trailer`}
+                  src={`${film?.trailer}?autoplay=1`}
+                  title={`${film?.title} Trailer`}
                   className="absolute inset-0 w-full h-full"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
@@ -452,7 +452,7 @@ const MovieDetails = () => {
                 className="mt-4 text-center"
               >
                 <h3 className="text-white text-xl font-semibold mb-1">
-                  {film.title}
+                  {film?.title}
                 </h3>
                 <p className="text-gray-400 text-sm">
                   Press ESC to close or click outside

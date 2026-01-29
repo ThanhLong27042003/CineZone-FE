@@ -1,7 +1,9 @@
 import { authHttp } from "../../../utils/baseUrl";
 
-export const getAllGenresForAdmin = () => {
-  return authHttp.get("/genre/getAllGenre").then((res) => res.data.result);
+export const getAllGenresForAdmin = (page = 0, size = 10, search = "") => {
+  return authHttp
+    .get("/genre/getAllGenre", { params: { page, size, search } })
+    .then((res) => res.data.result);
 };
 
 export const createGenre = (formData) => {

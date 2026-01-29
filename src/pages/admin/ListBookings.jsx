@@ -39,7 +39,7 @@ const ListBookings = () => {
 
   const [page, setPage] = useState(0);
   const [filters, setFilters] = useState({
-    userId: "",
+    userName: "",
     showId: "",
     status: "",
     fromDate: "",
@@ -86,7 +86,7 @@ const ListBookings = () => {
 
   const resetFilters = () => {
     setFilters({
-      userId: "",
+      userName: "",
       showId: "",
       status: "",
       fromDate: "",
@@ -257,12 +257,12 @@ const ListBookings = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
           <input
             type="text"
-            name="userId"
-            value={filters.userId}
+            name="userName"
+            value={filters.userName}
             onChange={handleFilterChange}
-            placeholder="User ID"
+            placeholder="User Name"
             className="px-4 py-2 rounded-lg bg-white border-2 border-gray-200 
-                     focus:border-gray-400 transition-all outline-none placeholder-black"
+                     focus:border-gray-400 transition-all outline-none placeholder-gray-500 text-black"
           />
 
           <input
@@ -272,7 +272,7 @@ const ListBookings = () => {
             onChange={handleFilterChange}
             placeholder="Show ID"
             className="px-4 py-2 rounded-lg bg-white border-2 border-gray-200 
-                     focus:border-gray-400 transition-all outline-none placeholder-black"
+                     focus:border-gray-400 transition-all outline-none placeholder-gray-500 text-black"
           />
 
           <select
@@ -363,7 +363,7 @@ const ListBookings = () => {
                     className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
                   >
                     <td className="px-6 py-4">
-                      <span className="font-mono text-sm">#{booking.id}</span>
+                      <span className="font-mono text-sm text-gray-900">#{booking.id}</span>
                     </td>
                     <td className="px-6 py-4">
                       <div>
