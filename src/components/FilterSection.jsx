@@ -1,36 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FilterIcon, XIcon } from "lucide-react";
+import { getAllGenre } from "../service/GenreService";
 
 const FilterSection = ({ onFilterChange, isOpen, onToggle }) => {
   const [filters, setFilters] = useState({
-    country: "All",
     genre: "All",
     sortBy: "Latest",
   });
 
+  const [genres, setGenres] = useState([]);
+  const [loadingGenres, setLoadingGenres] = useState(false);
+
+  // Fetch genres from database
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        setLoadingGenres(true);
+        const data = await getAllGenre();
+        setGenres(data || []);
+      } catch (error) {
+        console.error("Failed to fetch genres:", error);
+      } finally {
+        setLoadingGenres(false);
+      }
+    };
+
+    if (isOpen) {
+      fetchGenres();
+    }
+  }, [isOpen]);
+
   const filterOptions = {
-    country: ["All", "US", "Korea", "China", "Japan", "Vietnam"],
-    genre: [
-      "All",
-      "Action",
-      "Adventure",
-      "Animation",
-      "Comedy",
-      "Crime",
-      "Documentary",
-      "Drama",
-      "Family",
-      "Fantasy",
-      "History",
-      "Horror",
-      "Music",
-      "Mystery",
-      "Romance",
-      "Science Fiction",
-      "Thriller",
-      "War",
+    sortBy: [
+      { value: "Latest", label: "Mới nhất" },
+      { value: "IMDb Rating", label: "Đánh giá cao" },
+      { value: "Vote Count", label: "Lượt xem" },
     ],
-    sortBy: ["Latest", "IMDb Rating", "Vote Count"],
   };
 
   const handleFilterChange = (key, value) => {
@@ -40,7 +45,6 @@ const FilterSection = ({ onFilterChange, isOpen, onToggle }) => {
 
   const resetFilters = () => {
     const resetFilters = {
-      country: "All",
       genre: "All",
       sortBy: "Latest",
     };
@@ -64,47 +68,41 @@ const FilterSection = ({ onFilterChange, isOpen, onToggle }) => {
         </div>
 
         <div className="space-y-4">
-          {/* Quốc gia */}
-          <div>
-            <label className="block text-sm font-medium mb-2 text-">
-              Quốc gia:
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {filterOptions.country.map((option) => (
-                <button
-                  key={option}
-                  onClick={() => handleFilterChange("country", option)}
-                  className={`px-3 py-1 text-sm rounded border ${
-                    filters.country === option
-                      ? "bg-primary text-white border-primary-dull"
-                      : "bg-gray-800 text-gray-300 border-gray-600 hover:border-gray-500"
-                  }`}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Thể loại */}
+          {/* Thể loại - Dynamic from DB */}
           <div>
             <label className="block text-sm font-medium mb-2 text-white">
               Thể loại:
             </label>
             <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
-              {filterOptions.genre.map((option) => (
-                <button
-                  key={option}
-                  onClick={() => handleFilterChange("genre", option)}
-                  className={`px-3 py-1 text-sm rounded border ${
-                    filters.genre === option
-                      ? "bg-primary text-white border-primary-dull"
-                      : "bg-gray-800 text-gray-300 border-gray-600 hover:border-gray-500"
-                  }`}
-                >
-                  {option}
-                </button>
-              ))}
+              {loadingGenres ? (
+                <span className="text-gray-400 text-sm">Đang tải...</span>
+              ) : (
+                <>
+                  <button
+                    onClick={() => handleFilterChange("genre", "All")}
+                    className={`px-3 py-1 text-sm rounded border ${
+                      filters.genre === "All"
+                        ? "bg-primary text-white border-primary-dull"
+                        : "bg-gray-800 text-gray-300 border-gray-600 hover:border-gray-500"
+                    }`}
+                  >
+                    Tất cả
+                  </button>
+                  {genres.map((genre) => (
+                    <button
+                      key={genre.id}
+                      onClick={() => handleFilterChange("genre", genre.name)}
+                      className={`px-3 py-1 text-sm rounded border ${
+                        filters.genre === genre.name
+                          ? "bg-primary text-white border-primary-dull"
+                          : "bg-gray-800 text-gray-300 border-gray-600 hover:border-gray-500"
+                      }`}
+                    >
+                      {genre.name}
+                    </button>
+                  ))}
+                </>
+              )}
             </div>
           </div>
 
@@ -116,15 +114,15 @@ const FilterSection = ({ onFilterChange, isOpen, onToggle }) => {
             <div className="flex flex-wrap gap-2">
               {filterOptions.sortBy.map((option) => (
                 <button
-                  key={option}
-                  onClick={() => handleFilterChange("sortBy", option)}
+                  key={option.value}
+                  onClick={() => handleFilterChange("sortBy", option.value)}
                   className={`px-3 py-1 text-sm rounded border ${
-                    filters.sortBy === option
+                    filters.sortBy === option.value
                       ? "bg-primary text-white border-primary-dull"
                       : "bg-gray-800 text-gray-300 border-gray-600 hover:border-gray-500"
                   }`}
                 >
-                  {option}
+                  {option.label}
                 </button>
               ))}
             </div>
@@ -137,7 +135,7 @@ const FilterSection = ({ onFilterChange, isOpen, onToggle }) => {
             onClick={resetFilters}
             className="px-6 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition cursor-pointer"
           >
-            Đóng
+            Đặt lại
           </button>
           <button
             onClick={() => {

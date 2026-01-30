@@ -26,6 +26,7 @@ const EditShows = () => {
     showDate: "",
     showTime: "",
     price: "",
+    status: "",
   });
   const [movies, setMovies] = useState([]);
   const [rooms, setRooms] = useState([]);
@@ -51,6 +52,7 @@ const EditShows = () => {
         showDate: show.showDate || "",
         showTime: show.showTime || "",
         price: show.price || "",
+        status: show.status || "DRAFT",
       });
       setMovies(moviesResponse.content || []);
       setRooms(roomsResponse || []);
@@ -292,6 +294,24 @@ const EditShows = () => {
                          focus:border-gray-400 transition-all outline-none text-gray-900"
                 placeholder="9.99"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Status *
+              </label>
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 rounded-lg bg-white border-2 border-gray-200 
+                         focus:border-gray-400 transition-all outline-none text-gray-900"
+              >
+                <option value="DRAFT">Draft</option>
+                <option value="OPEN">Open</option>
+                <option value="FINISHED">Finished</option>
+              </select>
             </div>
           </div>
         </div>

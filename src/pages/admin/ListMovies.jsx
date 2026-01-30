@@ -8,7 +8,6 @@ import {
 import Title from "../../components/admin/Title";
 import { toast } from "react-hot-toast";
 import {
-  deleteMovie,
   getAllMoviesForAdmin,
 } from "../../service/admin/MovieService";
 import {
@@ -18,7 +17,6 @@ import {
   FaCalendar,
   FaSearch,
   FaEdit,
-  FaTrash,
   FaPlus,
 } from "react-icons/fa";
 
@@ -62,17 +60,7 @@ const ListMovies = () => {
     }
   };
 
-  const handleDelete = async (movieId) => {
-    if (window.confirm("Are you sure you want to delete this movie? This action cannot be undone.")) {
-      try {
-        await deleteMovie(movieId);
-        toast.success("Movie deleted successfully");
-        fetchMovies();
-      } catch (error) {
-        toast.error(error?.response?.data?.message || "Failed to delete movie. It may have associated shows or bookings.");
-      }
-    }
-  };
+
 
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
@@ -184,6 +172,7 @@ const ListMovies = () => {
                   <th className="px-6 py-4 text-left font-semibold">Release Date</th>
                   <th className="px-6 py-4 text-left font-semibold">Duration</th>
                   <th className="px-6 py-4 text-left font-semibold">Rating</th>
+                  <th className="px-6 py-4 text-left font-semibold">Status</th>
                   <th className="px-6 py-4 text-left font-semibold">Genres</th>
                   <th className="px-6 py-4 text-left font-semibold">Actions</th>
                 </tr>
@@ -237,6 +226,15 @@ const ListMovies = () => {
                         </span>
                       </div>
                     </td>
+
+                    <td className="px-6 py-4">
+                      <span className={`px-2 py-1 rounded-full text-xs font-semibold
+                        ${movie.status === 'NOW_SHOWING' ? 'bg-green-100 text-green-800' : 
+                          movie.status === 'COMING_SOON' ? 'bg-blue-100 text-blue-800' : 
+                          'bg-red-100 text-red-800'}`}>
+                        {movie.status ? movie.status.replace(/_/g, " ") : 'N/A'}
+                      </span>
+                    </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-wrap gap-1">
                         {movie.genres && movie.genres.length > 0 ? (
@@ -269,13 +267,7 @@ const ListMovies = () => {
                         >
                           <FaEdit />
                         </button>
-                        <button
-                          onClick={() => handleDelete(movie.id)}
-                          className="p-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
-                          title="Delete"
-                        >
-                          <FaTrash />
-                        </button>
+
                       </div>
                     </td>
                   </tr>

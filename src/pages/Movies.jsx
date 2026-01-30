@@ -5,29 +5,25 @@ import FilterSection from "../components/FilterSection";
 import DateFilter from "../components/DateFilter";
 import { Filter, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
-import { getMovieForPageApi } from "../redux/reducer/FilmReducer";
+import { getAllMovieApi, getMovieForPageApi } from "../redux/reducer/FilmReducer";
 import { getAvailableDates, getShowsByDate } from "../service/ShowService";
 import Loading from "../components/Loading";
 import { motion } from "framer-motion";
 import { laythongtinphim } from "../service/MovieService";
 
 const Movies = () => {
-  const { filmForPage, loading } = useSelector((state) => state.FilmReducer);
+  const { arrFilm, loading } = useSelector((state) => state.FilmReducer);
   const dispatch = useDispatch();
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [currentFilters, setCurrentFilters] = useState({});
+  const [activeTab, setActiveTab] = useState("NOW_SHOWING");
 
   // ✨ NEW: Date filter state
   const [selectedDate, setSelectedDate] = useState(null);
   const [availableDates, setAvailableDates] = useState([]);
-  const [showsByDate, setShowsByDate] = useState(null);
   const [isLoadingDates, setIsLoadingDates] = useState(false);
-
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(0);
-  const moviesPerPage = 20;
 
   // ✨ Load available dates on mount
   useEffect(() => {
@@ -46,12 +42,10 @@ const Movies = () => {
     loadAvailableDates();
   }, []);
 
-  // Fetch movies when page changes (if no date filter)
+  // Fetch all movies on mount
   useEffect(() => {
-    if (!selectedDate) {
-      dispatch(getMovieForPageApi({ page: currentPage, size: moviesPerPage }));
-    }
-  }, [currentPage, dispatch, selectedDate]);
+    dispatch(getAllMovieApi());
+  }, [dispatch]);
 
   // ✨ Fetch shows by date when date is selected
   useEffect(() => {
@@ -60,7 +54,6 @@ const Movies = () => {
         try {
           setIsLoadingDates(true);
           const shows = await getShowsByDate(selectedDate);
-          setShowsByDate(shows);
 
           // Extract unique movies from shows
           const movieIds = new Set();
@@ -76,8 +69,7 @@ const Movies = () => {
 
           for (const id of movieIds) {
             const movie = await laythongtinphim(id);
-            console.log("movie", movie);
-            if (movie) {
+            if (movie && movie.status !== 'STOPPED') {
               moviesWithShows.push(movie);
             }
           }
@@ -94,112 +86,53 @@ const Movies = () => {
     loadShowsByDate();
   }, [selectedDate]);
 
-  // Scroll to top when page changes
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [currentPage]);
 
-  // Update filtered movies when data changes
+  // ✨ Re-apply filters when activeTab or arrFilm changes
   useEffect(() => {
-    if (!selectedDate && filmForPage?.content) {
-      setFilteredMovies(filmForPage.content);
+    if (!selectedDate && arrFilm) {
+      let filtered = [...arrFilm];
+
+      // Filter by Tab (Status)
+      filtered = filtered.filter((movie) => movie.status === activeTab);
+
+      // Filter by Genre
+      if (currentFilters.genre && currentFilters.genre !== "All") {
+        filtered = filtered.filter((movie) =>
+          movie.genres?.some((genre) => genre.name === currentFilters.genre),
+        );
+      }
+
+      // Sort
+      if (currentFilters.sortBy) {
+        switch (currentFilters.sortBy) {
+          case "IMDb Rating":
+            filtered.sort((a, b) => b.voteAverage - a.voteAverage);
+            break;
+          case "Latest":
+            filtered.sort(
+              (a, b) => new Date(b.releaseDate) - new Date(a.releaseDate),
+            );
+            break;
+          case "Vote Count":
+            filtered.sort((a, b) => b.popularity - a.popularity);
+            break;
+          default:
+            break;
+        }
+      }
+
+      setFilteredMovies(filtered);
     }
-  }, [filmForPage, selectedDate]);
+  }, [arrFilm, activeTab, currentFilters, selectedDate]);
 
   const handleFilterChange = (filters) => {
     setCurrentFilters(filters);
-    let filtered = [...(filmForPage?.content || [])];
-
-    if (filters.genre && filters.genre !== "All") {
-      filtered = filtered.filter((movie) =>
-        movie.genres?.some((genre) => genre.name === filters.genre),
-      );
-    }
-
-    if (filters.country && filters.country !== "All") {
-      filtered = filtered.filter((movie) =>
-        movie.genres?.some((genre) => genre.name === filters.country),
-      );
-    }
-
-    if (filters.sortBy) {
-      switch (filters.sortBy) {
-        case "IMDb Rating":
-          filtered.sort((a, b) => b.voteAverage - a.voteAverage);
-          break;
-        case "Latest":
-          filtered.sort(
-            (a, b) => new Date(b.releaseDate) - new Date(a.releaseDate),
-          );
-          break;
-        case "Vote Count":
-          filtered.sort((a, b) => b.popularity - a.popularity);
-          break;
-        default:
-          break;
-      }
-    }
-
-    setFilteredMovies(filtered);
+    // Logic moved to useEffect
   };
 
   // ✨ Handle date selection
   const handleDateSelect = (date) => {
     setSelectedDate(date);
-    setCurrentPage(0);
-  };
-
-  // Pagination handlers
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const handlePrevious = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleNext = () => {
-    if (filmForPage?.totalPages && currentPage < filmForPage.totalPages - 1) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const getPageNumbers = () => {
-    const pages = [];
-    const totalPages = filmForPage?.totalPages || 0;
-    const maxPagesToShow = 5;
-
-    if (totalPages <= maxPagesToShow) {
-      for (let i = 0; i < totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      if (currentPage <= 2) {
-        for (let i = 0; i < 4; i++) {
-          pages.push(i);
-        }
-        pages.push("...");
-        pages.push(totalPages - 1);
-      } else if (currentPage >= totalPages - 3) {
-        pages.push(0);
-        pages.push("...");
-        for (let i = totalPages - 4; i < totalPages; i++) {
-          pages.push(i);
-        }
-      } else {
-        pages.push(0);
-        pages.push("...");
-        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-          pages.push(i);
-        }
-        pages.push("...");
-        pages.push(totalPages - 1);
-      }
-    }
-
-    return pages;
   };
 
   if (loading || isLoadingDates) return <Loading />;
@@ -212,35 +145,38 @@ const Movies = () => {
       {/* Header */}
       <div className="flex items-center justify-between my-4 flex-wrap gap-4">
         <div>
-          <h1 className="text-lg font-medium my-4">
-            {selectedDate ? (
-              <>
-                Suất chiếu ngày{" "}
-                <span className="text-primary">
-                  {new Date(selectedDate).toLocaleDateString("vi-VN")}
-                </span>
-              </>
-            ) : Object.values(currentFilters).some(
-                (filter) => filter !== "All" && filter !== "Latest",
-              ) ? (
-              "Filter results"
-            ) : (
-              "Now Showing"
-            )}
-          </h1>
+          {/* Tabs */}
+          <div className="flex gap-6 mb-2">
+            <button
+              onClick={() => {
+                setActiveTab("NOW_SHOWING");
+              }}
+              className={`text-xl font-bold pb-1 transition-all border-b-2 ${
+                activeTab === "NOW_SHOWING"
+                  ? "text-white border-primary"
+                  : "text-gray-500 border-transparent hover:text-gray-300"
+              }`}
+            >
+              Now Showing
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab("COMING_SOON");
+              }}
+              className={`text-xl font-bold pb-1 transition-all border-b-2 ${
+                activeTab === "COMING_SOON"
+                  ? "text-white border-primary"
+                  : "text-gray-500 border-transparent hover:text-gray-300"
+              }`}
+            >
+              Coming Soon
+            </button>
+          </div>
+
           <p className="text-gray-400 text-sm">
-            {selectedDate ? (
-              `Tìm thấy ${filteredMovies.length} phim`
-            ) : (
-              <>
-                Showing {currentPage * moviesPerPage + 1}-
-                {Math.min(
-                  (currentPage + 1) * moviesPerPage,
-                  filmForPage?.totalElements || 0,
-                )}{" "}
-                of {filmForPage?.totalElements || 0} movies
-              </>
-            )}
+            {selectedDate
+              ? `Tìm thấy ${filteredMovies.length} phim`
+              : `Found ${filteredMovies.length} movies`}
           </p>
         </div>
 
@@ -264,11 +200,9 @@ const Movies = () => {
 
       {/* Active Filters Display */}
       {(selectedDate ||
-        Object.values(currentFilters).some(
-          (f) => f !== "All" && f !== "Latest",
-        )) && (
+        (currentFilters.genre && currentFilters.genre !== "All")) && (
         <div className="flex items-center gap-2 mb-6 flex-wrap">
-          <span className="text-sm text-gray-400">Đang lọc:</span>
+          <span className="text-sm text-gray-400">Filters:</span>
 
           {selectedDate && (
             <div className="flex items-center gap-2 px-3 py-1 bg-primary/20 border border-primary/30 rounded-full text-sm">
@@ -321,70 +255,9 @@ const Movies = () => {
         </div>
       )}
 
-      {/* Pagination Controls */}
-      {!selectedDate && filmForPage?.totalPages > 1 && (
-        <motion.div
-          className="flex items-center justify-center gap-2 mt-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <button
-            onClick={handlePrevious}
-            disabled={currentPage === 0}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
-              currentPage === 0
-                ? "bg-zinc-800/50 text-gray-600 cursor-not-allowed"
-                : "bg-zinc-800 text-white hover:bg-zinc-700 hover:shadow-lg"
-            }`}
-          >
-            <ChevronLeft className="w-5 h-5" />
-            <span className="hidden sm:inline">Previous</span>
-          </button>
+  // No pagination controls needed
 
-          <div className="flex items-center gap-2">
-            {getPageNumbers().map((page, index) => (
-              <React.Fragment key={index}>
-                {page === "..." ? (
-                  <span className="px-3 py-2 text-gray-500">...</span>
-                ) : (
-                  <button
-                    onClick={() => handlePageChange(page)}
-                    className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 min-w-[44px] ${
-                      currentPage === page
-                        ? "bg-gradient-to-r from-primary to-primary-dull text-white shadow-lg shadow-primary/25"
-                        : "bg-zinc-800 text-gray-300 hover:bg-zinc-700 hover:text-white"
-                    }`}
-                  >
-                    {page + 1}
-                  </button>
-                )}
-              </React.Fragment>
-            ))}
-          </div>
 
-          <button
-            onClick={handleNext}
-            disabled={currentPage === filmForPage?.totalPages - 1}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
-              currentPage === filmForPage?.totalPages - 1
-                ? "bg-zinc-800/50 text-gray-600 cursor-not-allowed"
-                : "bg-zinc-800 text-white hover:bg-zinc-700 hover:shadow-lg"
-            }`}
-          >
-            <span className="hidden sm:inline">Next</span>
-            <ChevronRight className="w-5 h-5" />
-          </button>
-        </motion.div>
-      )}
-
-      {!selectedDate && filmForPage?.totalPages > 1 && (
-        <div className="flex justify-center mt-4 sm:hidden">
-          <span className="text-gray-400 text-sm">
-            Page {currentPage + 1} of {filmForPage?.totalPages}
-          </span>
-        </div>
-      )}
 
       <FilterSection
         isOpen={isFilterOpen}

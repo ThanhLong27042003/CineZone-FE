@@ -9,7 +9,6 @@ import Title from "../../components/admin/Title";
 import { toast } from "react-hot-toast";
 import { getAllMoviesForAdmin } from "../../service/admin/MovieService";
 import {
-  deleteShow,
   getAllShowsForAdmin,
 } from "../../service/admin/ShowService";
 import {
@@ -18,7 +17,6 @@ import {
   FaTicketAlt,
   FaCalendar,
   FaEdit,
-  FaTrash,
   FaPlus,
   FaDoorOpen,
 } from "react-icons/fa";
@@ -104,17 +102,7 @@ const ListShows = () => {
     setPage(0);
   };
 
-  const handleDelete = async (showId) => {
-    if (window.confirm("Are you sure you want to delete this show? Shows with bookings cannot be deleted.")) {
-      try {
-        await deleteShow(showId);
-        toast.success("Show deleted successfully");
-        fetchShows();
-      } catch (error) {
-        toast.error(error.response?.data?.message || "Failed to delete show. It may have existing bookings.");
-      }
-    }
-  };
+
 
   const resetFilters = () => {
     setFilters({
@@ -142,12 +130,12 @@ const ListShows = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "UPCOMING":
-        return "bg-blue-100 text-blue-700 border border-blue-300";
-      case "ONGOING":
+      case "OPEN":
         return "bg-green-100 text-green-700 border border-green-300";
-      case "COMPLETED":
-        return "bg-gray-100 text-gray-700 border border-gray-300";
+      case "DRAFT":
+        return "bg-yellow-100 text-yellow-700 border border-yellow-300";
+      case "FINISHED":
+        return "bg-blue-100 text-blue-700 border border-blue-300";
       default:
         return "bg-gray-100 text-gray-700";
     }
@@ -155,12 +143,12 @@ const ListShows = () => {
 
   const getStatusLabel = (status) => {
     switch (status) {
-      case "UPCOMING":
-        return "🎬 Upcoming";
-      case "ONGOING":
-        return "▶️ Ongoing";
-      case "COMPLETED":
-        return "✅ Completed";
+      case "OPEN":
+        return "🟢 Open";
+      case "DRAFT":
+        return "📝 Draft";
+      case "FINISHED":
+        return "✅ Finished";
       default:
         return status || "N/A";
     }
@@ -259,18 +247,18 @@ const ListShows = () => {
             icon: FaFilm,
           },
           {
-            label: "Upcoming",
-            value: shows.filter((s) => s.showStatus === "UPCOMING").length,
+            label: "Coming Soon",
+            value: shows.filter((s) => s.status === "COMING_SOON").length,
             icon: FaCalendar,
           },
           {
-            label: "Ongoing",
-            value: shows.filter((s) => s.showStatus === "ONGOING").length,
+            label: "Now Showing",
+            value: shows.filter((s) => s.status === "NOW_SHOWING").length,
             icon: FaClock,
           },
           {
-            label: "Completed",
-            value: shows.filter((s) => s.showStatus === "COMPLETED").length,
+            label: "Finished",
+            value: shows.filter((s) => s.status === "FINISHED").length,
             icon: FaTicketAlt,
           },
         ].map((stat, idx) => (
@@ -363,14 +351,14 @@ const ListShows = () => {
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(show.showStatus)}`}
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(show.status)}`}
                       >
-                        {getStatusLabel(show.showStatus)}
+                        {getStatusLabel(show.status)}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex gap-2">
-                        {show.showStatus !== "COMPLETED" ? (
+                        {show.status !== "FINISHED" ? (
                           <>
                             <button
                               onClick={() =>
@@ -381,17 +369,10 @@ const ListShows = () => {
                             >
                               <FaEdit />
                             </button>
-                            <button
-                              onClick={() => handleDelete(show.showId)}
-                              className="p-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
-                              title="Delete"
-                            >
-                              <FaTrash />
-                            </button>
                           </>
                         ) : (
                           <span className="text-sm text-gray-500 italic px-2">
-                            Cannot modify completed show
+                            View Only
                           </span>
                         )}
                       </div>

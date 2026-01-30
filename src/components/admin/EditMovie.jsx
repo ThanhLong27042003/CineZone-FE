@@ -24,6 +24,7 @@ const EditMovie = () => {
     trailer: "",
     genreIds: [],
     castIds: [],
+    status: "",
   });
   const [genres, setGenres] = useState([]);
   const [casts, setCasts] = useState([]);
@@ -56,6 +57,7 @@ const EditMovie = () => {
         trailer: film.trailer || "",
         genreIds: film.genres?.map((g) => g.id) || [],
         castIds: film.casts?.map((c) => c.id) || [],
+        status: film.status || "COMING_SOON",
       });
       setFetchLoading(false);
     }
@@ -207,6 +209,24 @@ const EditMovie = () => {
                 className="w-full px-4 py-3 rounded-lg bg-white border-2 border-gray-200 
                          focus:border-gray-500 transition-all outline-none text-gray-900"
               />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Status *
+              </label>
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 rounded-lg bg-white border-2 border-gray-200 
+                         focus:border-gray-500 transition-all outline-none text-gray-900"
+              >
+                <option value="COMING_SOON">Coming Soon</option>
+                <option value="NOW_SHOWING">Now Showing</option>
+                <option value="STOPPED">Stopped</option>
+              </select>
             </div>
           </div>
         </div>
