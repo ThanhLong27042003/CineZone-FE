@@ -255,8 +255,6 @@ const Movies = () => {
         </div>
       )}
 
-  // No pagination controls needed
-
 
 
       <FilterSection

@@ -200,7 +200,7 @@ const ListBookings = () => {
             },
             {
               label: "Total Revenue",
-              value: `${currency}${(statistics.totalRevenue / 100 || 0).toFixed(2)}`,
+              value: `${currency}${(statistics.totalRevenue || 0).toFixed(2)}`,
               icon: FaDollarSign,
               bgColor: "bg-green-50",
               iconColor: "text-green-600",
@@ -399,7 +399,7 @@ const ListBookings = () => {
                     <td className="px-6 py-4">
                       <span className="font-bold text-green-600">
                         {currency}
-                        {(booking.totalPrice / 100).toFixed(2)}
+                        {(booking.totalPrice).toFixed(2)}
                       </span>
                     </td>
                     <td className="px-6 py-4">

@@ -205,7 +205,7 @@ export const seatsManagement = (showId, myInfo) => {
         ],
         { type: "application/json" },
       );
-      navigator.sendBeacon("http://localhost:8080/cinezone/seat/release", blob);
+      navigator.sendBeacon("https://cinezone-be.onrender.com/cinezone/seat/release", blob);
     });
   };
 

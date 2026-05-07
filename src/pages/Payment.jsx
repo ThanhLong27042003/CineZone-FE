@@ -27,17 +27,6 @@ const Payment = () => {
       navigate("/");
       return;
     }
-    const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          toast.error("Payment session expired!");
-          navigate(-1);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
   }, [unbookedSeats, navigate]);
 
   const paymentMethods = [
@@ -109,9 +98,6 @@ const Payment = () => {
             <h1 className="text-3xl font-bold text-white">Payment</h1>
             <div className="flex items-center gap-2 px-4 py-2 bg-red-500/20 border border-red-500/30 rounded-lg">
               <Clock className="w-5 h-5 text-red-400" />
-              <span className="text-red-400 font-mono font-semibold">
-                {formatTime(countdown)}
-              </span>
             </div>
           </div>
         </motion.div>

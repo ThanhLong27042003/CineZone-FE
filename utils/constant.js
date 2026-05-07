@@ -1,1 +1,1 @@
-export const DOMAIN_BE = "http://localhost:8080/cinezone";
+export const DOMAIN_BE = "https://cinezone-be.onrender.com/cinezone";

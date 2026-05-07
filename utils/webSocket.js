@@ -8,7 +8,7 @@ export const webSocket = (showId, onMessage) => {
   useEffect(() => {
     if (!showId || !onMessage) return;
 
-    const socket = new SockJS("http://localhost:8080/cinezone/ws");
+    const socket = new SockJS("https://cinezone-be.onrender.com/cinezone/ws");
     const stompClient = Stomp.over(socket);
 
     stompClient.connect({}, (frame) => {

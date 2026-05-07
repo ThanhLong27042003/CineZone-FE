@@ -101,7 +101,7 @@ const DashBoard = () => {
     datasets: [
       {
         label: "Revenue",
-        data: revenueByDate?.map((item) => item.revenue / 100) || [],
+        data: revenueByDate?.map((item) => item.revenue) || [],
         borderColor: "rgb(59, 130, 246)",
         backgroundColor: "rgba(59, 130, 246, 0.1)",
         tension: 0.4,
@@ -238,7 +238,7 @@ const DashBoard = () => {
           },
           {
             title: "Total Revenue",
-            value: `${currency}${((statistics?.totalRevenue || 0) / 100).toFixed(2)}`,
+            value: `${currency}${(statistics?.totalRevenue || 0).toFixed(2)}`,
             icon: FaDollarSign,
             bgColor: "bg-green-50",
             iconColor: "text-green-600",
@@ -352,7 +352,7 @@ const DashBoard = () => {
                   <td className="px-6 py-4">
                     <span className="font-bold text-green-600">
                       {currency}
-                      {(movie.revenue / 100).toFixed(2)}
+                      {movie.revenue.toFixed(2)}
                     </span>
                   </td>
                 </tr>

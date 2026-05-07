@@ -73,7 +73,7 @@ npm install
 Create a `.env` file in the root directory:
 
 ```env
-VITE_API_URL=http://localhost:8080/api
+VITE_API_URL=https://cinezone-be.onrender.com/api
 VITE_WS_URL=ws://localhost:8080
 ```
 
@@ -182,7 +182,7 @@ python utils/uploadImageIntoCloudinary.py    # Upload images
 
 | Variable       | Description     | Example                     |
 | -------------- | --------------- | --------------------------- |
-| `VITE_API_URL` | Backend API URL | `http://localhost:8080/api` |
+| `VITE_API_URL` | Backend API URL | `https://cinezone-be.onrender.com/api` |
 | `VITE_WS_URL`  | WebSocket URL   | `ws://localhost:8080`       |
 
 ## 🤝 Contributing
