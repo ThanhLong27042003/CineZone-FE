@@ -164,19 +164,22 @@ python utils/uploadImageIntoCloudinary.py    # Upload images
 
 ### Home Page
 
-![Home](https://placehold.co/800x500/1a1a1a/ffffff?text=Home+Page)
+![Home 1](https://res.cloudinary.com/dzjhwjwah/image/upload/v1781252078/c4d5d31f-4c18-415c-b738-7a297d71fa21_dltrqj.jpg)
+
+![Home 2](https://res.cloudinary.com/dzjhwjwah/image/upload/v1781252078/dcc4195e-ae22-4bb5-8a0e-1c6fb6ee4e1a_dgzsuz.jpg)
+
 
 ### Movie Details
 
-![Details](https://placehold.co/800x500/1a1a1a/ffffff?text=Movie+Details)
+![Movie Details](https://res.cloudinary.com/dzjhwjwah/image/upload/v1781252079/446c4847-6c7e-434b-8b4e-3712a7904bed_wbdvyx.jpg)
 
 ### Seat Selection
 
-![Seats](https://placehold.co/800x500/1a1a1a/ffffff?text=Seat+Selection)
+![Seats](https://res.cloudinary.com/dzjhwjwah/image/upload/v1781252079/16cf68ec-b929-40d0-afed-b5d156660182_k2npet.jpg)
 
 ### Admin Dashboard
 
-![Admin](https://placehold.co/800x500/1a1a1a/ffffff?text=Admin+Dashboard)
+![Admin](https://res.cloudinary.com/dzjhwjwah/image/upload/v1781252267/8c9e72f8-2081-480c-abe6-3e925a45d3b3.png)
 
 ## 🔐 Environment Variables
 
@@ -201,10 +204,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👨‍💻 Author
 
-**Your Name**
+**Tran Ngoc Thanh Long**
 
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Email: your.email@example.com
+- GitHub: [@ThanhLong27042003](https://github.com/ThanhLong27042003)
+- Email: tranngocthanhlong03@gmail.com
 
 ## 🙏 Acknowledgments
 
@@ -214,7 +217,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-For support, email your.email@example.com or open an issue.
+For support, email tranngocthanhlong03@gmail.com or open an issue.
 
 ---
 
